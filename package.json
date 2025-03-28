@@ -1,0 +1,27 @@
+{
+  "name": "rtcopy",
+  "version": "1.0.0",
+  "description": "A simple tool that uses WebRTC and WebSockets to allow users to temporarily share files in a P2P fashion.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fcothiago/rtcopy.git"
+  },
+  "keywords": [
+    "WebRTC",
+    "Websockets"
+  ],
+  "author": "fcothiago",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fcothiago/rtcopy/issues"
+  },
+  "homepage": "https://github.com/fcothiago/rtcopy#readme",
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}
