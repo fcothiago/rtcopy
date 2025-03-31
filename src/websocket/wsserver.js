@@ -13,6 +13,12 @@ function handle_socket_connection(socket)
 	socket.on('rtc-answer',(offer,to) =>{});
 	/*Handles user sending ice-candidate*/
 	socket.on('rtc-icecandidate',(offer,to) =>{});
+	/*Handles user adding files to a folder*/
+	socket.on('add-files',(files) =>{});
+	/*Handles user removing files from a folder*/
+	socket.on('rm-files',(files) =>{});
+
 }
+
 
 module.exports = {handle_socket_connection};
