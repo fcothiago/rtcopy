@@ -8,9 +8,11 @@ class folder_manager{
 	}
 
 	add_user(id,pass){
-		if (this.pass && this.pass !== pass)
+		console.log(`${this.pass} ${pass}`)
+		if (this.pass && this.pass != pass)
 			return false;
-		this.users.append(id)
+		this.users.push(id)
+		return true;
 	};
 
 	remove_user(id){
@@ -35,7 +37,10 @@ exports.create_folder = (name,pass) => {
 };
 
 exports.enter_folder = (name,pass,sockid) => {
-	return foldersname_map.get(name).add_user(sockid,pass);
+	const folder = foldersname_map.get(name);
+	if(!folder)
+		return false;
+	return folder.add_user(sockid,pass);
 }
 
 exports.remove_folder = (name) => {

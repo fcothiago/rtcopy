@@ -12,7 +12,7 @@ exports.enterRoom = (req,res) => {
 	let check;
 	if(!folders.check_folder(folder_name))
 		folders.create_folder(folder_name,folder_pass);
-	const params = {folder_name:"folder_name",folder_pass:"folder_pass"};
+	const params = {folder_name:folder_name,folder_pass:folder_pass};
 	res.render("folder", {params});
 
 }	

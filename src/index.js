@@ -12,7 +12,7 @@ app.use('/',folderRoutes);
 
 //Set up static folder (for CSS & JS)
 const path = require("path");
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 //Set render engine EJS
 app.set("view engine", "ejs");
