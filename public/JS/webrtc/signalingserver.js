@@ -1,10 +1,4 @@
 //TODO:Check variables naming. Maybe it's better to padronize termos like reciver and sender
-async function setup_datachannel(peer,reciver)
-{
-	const datachannel = peer.createDataChannel("datachannel");
-	datachannel.onopen = () => console.log(`opened datachannel with socket id ${reciver}`);
-}
-
 async function setup_offer(peer)
 {
 	const offer = await peer.createOffer();
@@ -26,26 +20,27 @@ async function create_peer(socket,reciver)
 		if(event.candidate)
 			socket.emit("rtc-icecandidate",{reciver:reciver,icecandidate:event.candidate});
 	};
-	await setup_datachannel(peer,reciver);
-	return peer;
+	const datachannel =  await peer.createDataChannel("datachannel");
+	return [peer,datachnnel];
 }
 
 async function handle_peer_request(socket,reciver,remote_peers)
 {
-	const peer = await create_peer(socket,reciver);
+	const [peer,datachannel] = await create_peer(socket,reciver);
 	const offer = await setup_offer(peer);
 	remote_peers.set(reciver,peer);
 	socket.emit("rtc-offer",{offer:offer,reciver:reciver});
+	return [peer,datachannel]
 }
 
 async function handle_peer_offer(socket,offer,reciver,remote_peers)
 {
-	//TODO: Handle whem reciver already exist in remote_peers
-	const peer = await create_peer(socket,reciver);
+	const [peer,datachannel] = await create_peer(socket,reciver);
 	await peer.setRemoteDescription(offer);
 	const answer = await setup_answer(peer,offer);
 	remote_peers.set(reciver,peer);
 	socket.emit("rtc-answer",{reciver:reciver,answer:answer});
+	return [peer,datachannel]
 }
 
 async function handle_peer_answer(answer,sender,remote_peers)
@@ -75,7 +70,10 @@ class signalingClient
 		this.onPeerRequestError = (error) => {};
 		this.onRtcOfferError = (error) => {};
 		this.onRtcAnswerError = (error) => {};	
-		this.onIcecandidateError = (error) => {};	
+		this.onIcecandidateError = (error) => {};
+		this.onDataChannelCreation = (datachannel) => {};
+		this.onDataChannelMessage = (message,datachannel) => {};
+		this.onDataChannelClose = (datachannel,peer_sock_id) => {};
 	}
 
 	init_signaling_client()
@@ -87,25 +85,28 @@ class signalingClient
 			}
 			socket.emit("peer-request",{folder_name:this.folder_name});
 		});
+
 		this.socket.on("peer-request", async (params) =>{
 			console.log(`Recived peer request from ${params.origin}`);	
 			const reciver = params.origin;
 			try{
-				await handle_peer_request(socket,reciver,this.peers);
+				const [peer,datachannel] = await handle_peer_request(socket,reciver,this.peers);
 			}catch(error){
 				this.onPeerRequestError(error);
 			}
 		});
+
 		this.socket.on("rtc-offer", async (params) =>{
 			console.log(`Recived offer from ${params.origin}`);	
 			const reciver = params.origin;
 			const offer = params.offer;
 			try{
-				await handle_peer_offer(socket,offer,reciver,this.peers)
+				const [peer,datachannel] = await handle_peer_offer(socket,offer,reciver,this.peers)
 			}catch(error){
 				this.onRtcOfferError(error);
 			}
 		});
+
 		this.socket.on("rtc-answer", async (params) => {
 			console.log(`Recived answer from ${params.origin}`);	
 			const reciver = params.origin;
@@ -117,6 +118,7 @@ class signalingClient
 			}
 
 		});
+
 		this.socket.on("rtc-icecandidate", async (params) => {
 			const sender = params.origin , icecandidate = params.icecandidate;
 			try{
@@ -125,6 +127,7 @@ class signalingClient
 				this.onIcecandidateError(error);	
 			}
 		});
+
 		socket.emit("join-folder",{folder_name:this.folder_name,folder_pass:this.folder_pass});
 	}
 
