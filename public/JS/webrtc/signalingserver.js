@@ -21,7 +21,7 @@ async function create_peer(socket,reciver)
 			socket.emit("rtc-icecandidate",{reciver:reciver,icecandidate:event.candidate});
 	};
 	const datachannel =  await peer.createDataChannel("datachannel");
-	return [peer,datachnnel];
+	return [peer,datachannel];
 }
 
 async function handle_peer_request(socket,reciver,remote_peers)
@@ -30,7 +30,7 @@ async function handle_peer_request(socket,reciver,remote_peers)
 	const offer = await setup_offer(peer);
 	remote_peers.set(reciver,peer);
 	socket.emit("rtc-offer",{offer:offer,reciver:reciver});
-	return [peer,datachannel]
+	return [peer,datachannel];
 }
 
 async function handle_peer_offer(socket,offer,reciver,remote_peers)
@@ -65,15 +65,22 @@ class signalingClient
 		this.folder_name = folder_name;
 		this.folder_pass = folder_pass;
 		this.peers = new Map();
+		this.onJoinFolderError = (result) => {console.log("onJoinFolderError")};
+		this.onPeerRequestError = (error) => {console.log("onPeerRequestError")};
+		this.onRtcOfferError = (error) => {console.log("onRtcOfferError")};
+		this.onRtcAnswerError = (error) => {console.log("onRtcAnswerError")};	
+		this.onIcecandidateError = (error) => {console.log("onIcecandidateError")};
+		this.onDataChannelOpen = (datachannel,sock_id) => {console.log("onDataChannelCreation")};
+		this.onDataChannelMessage = (message,datachannel) => {console.log("onDataChannelMessage")};
+		this.onDataChannelClose = (datachannel,peer_sock_id) => {console.log("onDataChannelClose")};
 		this.init_signaling_client();
-		this.onJoinfolderError = (result) => {};
-		this.onPeerRequestError = (error) => {};
-		this.onRtcOfferError = (error) => {};
-		this.onRtcAnswerError = (error) => {};	
-		this.onIcecandidateError = (error) => {};
-		this.onDataChannelCreation = (datachannel) => {};
-		this.onDataChannelMessage = (message,datachannel) => {};
-		this.onDataChannelClose = (datachannel,peer_sock_id) => {};
+	}
+
+	setup_datachannel(datachannel,sock_id)
+	{
+		datachannel.onopen = (event) => {
+			this.onDataChannelOpen(datachannel,sock_id);
+		};
 	}
 
 	init_signaling_client()
@@ -91,6 +98,7 @@ class signalingClient
 			const reciver = params.origin;
 			try{
 				const [peer,datachannel] = await handle_peer_request(socket,reciver,this.peers);
+				this.setup_datachannel(datachannel,peer,reciver);
 			}catch(error){
 				this.onPeerRequestError(error);
 			}
@@ -102,6 +110,7 @@ class signalingClient
 			const offer = params.offer;
 			try{
 				const [peer,datachannel] = await handle_peer_offer(socket,offer,reciver,this.peers)
+				this.setup_datachannel(datachannel,peer,reciver);
 			}catch(error){
 				this.onRtcOfferError(error);
 			}
