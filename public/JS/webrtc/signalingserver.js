@@ -71,7 +71,7 @@ class signalingClient
 		this.onRtcAnswerError = (error) => {console.log("onRtcAnswerError")};	
 		this.onIcecandidateError = (error) => {console.log("onIcecandidateError")};
 		this.onDataChannelOpen = (datachannel,sock_id) => {console.log("onDataChannelCreation")};
-		this.onDataChannelMessage = (message,datachannel) => {console.log("onDataChannelMessage")};
+		//this.onDataChannelMessage = (message,datachannel) => {console.log("onDataChannelMessage")};
 		this.onDataChannelClose = (datachannel,peer_sock_id) => {console.log("onDataChannelClose")};
 		this.init_signaling_client();
 	}
