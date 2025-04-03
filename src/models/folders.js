@@ -8,7 +8,6 @@ class folder_manager{
 	}
 
 	add_user(id,pass){
-		console.log(`${this.pass} ${pass}`)
 		if (this.pass && this.pass != pass)
 			return false;
 		this.users.push(id)
