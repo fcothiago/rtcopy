@@ -1,16 +1,16 @@
 <!doctype html>
 <html>
-	<html>
+	<head>
 		<meta charset="UTF-8"/>
 		<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
 		<script src="/JS/webrtc/signalingserver.js"></script>
 		<script src="/JS/webrtc/virtualfolder.js"></script>
 		<title>Virtual Folder</title>
-	</html>
+	</head>
 	<body>
 		<header>
 			<p>Virtual Folder</p>
-		</head>
+		</header>
 		<main>
 			<div id="user-area">
 				<input type="file" id="fileinput"/>	
@@ -24,8 +24,15 @@
 			const folder_pass = params.folder_pass;
 			const socket = io("http://localhost:7777");
 			const client = new signalingClient(socket,folder_name,folder_pass);
-			const vfolder = new virtualfolder();
-			document.getElementById('fileInput').addEventListener('change', (event) => {
+			const vfolder = new virtualFolder();	
+			client.onDataChannelOpen = (datachannel,id) => {
+				vfolder.add_datachannel(datachannel,id);
+			}
+			client.onDataChannelMessage = (message,id) => {
+				vfolder.handle_datachannel_message(message,id);
+			};	
+			client.init_signaling_client();
+			document.getElementById('fileinput').addEventListener('change', (event) => {
 				const file = event.target.files[0];
 				if(file)
 				{
