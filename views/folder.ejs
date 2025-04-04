@@ -13,7 +13,7 @@
 		</header>
 		<main>
 			<div id="user-area">
-				<input type="file" id="fileinput"/>	
+				<input type="file" id="fileinput" multiple/>	
 			</div>
 			<div id="remote-files">
 			</div>
@@ -33,10 +33,9 @@
 			};	
 			client.init_signaling_client();
 			document.getElementById('fileinput').addEventListener('change', (event) => {
-				const file = event.target.files[0];
-				if(file)
+				if(event.target.files)
 				{
-
+					vfolder.add_local_files(event.target.files);
 				}
 			});
 		</script>

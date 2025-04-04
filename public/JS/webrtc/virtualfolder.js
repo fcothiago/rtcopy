@@ -25,7 +25,8 @@ class virtualFolder
 	handle_open_datachannel(datachannel,id)
 	{
 		console.log(`Oned datachannel with sock id ${id}`);
-		datachannel.send({type:"file_infos",data:this.datachannels});
+		const data = JSON.stringify({type:"request_files"});
+		datachannel.send(data);
 	}
 
 	handle_datachannel_message(data,id)
@@ -43,9 +44,13 @@ class virtualFolder
 		//TODO:Config events of a new datachannel
 	}
 
-	add_local_file(file)
+	add_local_files(files)
 	{
-
+		for(const i in files)
+		{
+			const file = files[i];
+			console.log(file.name);
+		}
 	}
 
 	add_remote_file(file)
