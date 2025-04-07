@@ -27,17 +27,18 @@
 			const vfolder = new virtualFolder();	
 			client.onDataChannelOpen = (datachannel,id) => {
 				vfolder.add_datachannel(datachannel,id);
-			}
+			};
 			client.onDataChannelMessage = (message,id) => {
+				console.log(`Message from ${id} : ${message}`);
 				vfolder.handle_datachannel_message(message,id);
 			};	
-			client.init_signaling_client();
 			document.getElementById('fileinput').addEventListener('change', (event) => {
 				if(event.target.files)
 				{
 					vfolder.add_local_files(event.target.files);
 				}
 			});
+			client.init_signaling_client();
 		</script>
 	</body>
 </html>
