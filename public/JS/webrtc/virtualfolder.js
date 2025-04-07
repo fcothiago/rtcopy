@@ -1,3 +1,15 @@
+const CODES = {
+	set_remote_files_infos : 0,
+	del_remote_file  : 1,
+	send_local_files_infos : 2,
+	peer_warning : 3
+};
+
+function stract_file_infos(file,file_id)
+{
+	return {file_id:file_id,name:file.name}
+}
+
 class virtualFolder
 {
 	constructor()
@@ -8,46 +20,48 @@ class virtualFolder
 		this.onCloseDataChannel = (datachannel,id) => {console.log(`Datachannel id ${id} closed`)};
 	}
 
-	/*Adding and and Configing a new Peer's datachannel*/
+	/*Adding and and Config a new Peer's datachannel*/
 	
+	//Adds a new data channel
 	add_datachannel(datachannel,id)
 	{
 		//TODO:Handle new datachannel
 		console.log(`Adding datachannel to socket id ${id}`);
 		this.datachannels.set(id,datachannel);
 		this.handle_open_datachannel(datachannel,id);
-
 	}
 
 	handle_datachannel_error(id,error)
 	{
 		
 	}
-
+	
+	//Handles this.datachannels[id] open event
 	handle_open_datachannel(datachannel,id)
 	{
 		console.log(`Opened datachannel with sock id ${id}`);
-		const data = JSON.stringify({type:"request_files"});
-		datachannel.send(data);
+		const message = JSON.stringify({code:'send_local_files_infos'});
+		datachannel.send(message);
 	}
-
-	handle_datachannel_message(data,id)
+	
+	//Handles data sent by this.datachannel[id]. 
+	handle_datachannel_message(message,id)
 	{
-		console.log(`Recive message from ${id} - ${data}`);
+		const obj = JSON.parse(message);
+		const code = obj.code;
+		const code_handlers = {
+			set_remote_files_infos : (data) => console.log('set_remote_files_infos') ,
+			del_remote_file : (data) => console.log('set_remote_files_infos') ,
+			send_local_files_infos : (data) => this.send_local_files_infos(id) ,
+			peer_warning : (data) => console.log(`peer message ${data}`)
+		};
+		//TODO:Handle a invalid code
+		code_handlers[code](obj.data);
 	}
 
-	handle_datachannel_status_change()
-	{
-		
-	}
-
-	setup_datachannel(datachannel,id)
-	{
-		//TODO:Config events of a new datachannel
-	}
-
-	/*Adding files and notifing current peers*/
-
+	/* Adding files and notify current peers */
+	
+	//Send data to all remote peers
 	broadcast_data(data)
 	{
 		const data_ = JSON.stringify(data);
@@ -63,9 +77,28 @@ class virtualFolder
 		{
 			const file = files[i] , file_id = crypto.randomUUID();
 			this.local_files.set(file_id,file);
-			files_infos[file_id] = {id:file_id,name:file.name};
+			files_infos[file_id] = stract_file_infos(file,file_id);
 		}
-		this.broadcast_data(files_infos);
+		const data = { 
+			code:'set_remote_files_infos',
+			data:files_infos 
+		};
+		this.broadcast_data(data);
+	}
+	
+	//Sends all local files infos to a peer
+	send_local_files_infos(dc_id)
+	{
+		const data = {};
+		this.local_files.forEach((file,file_id) => {
+			data[file_id] = stract_file_infos(file,file_id);
+		});
+		//TODO:Handle if there is no dc_id in this.datachannels
+		const message = JSON.stringify({
+			code:'set_remote_files_infos',
+			data:data
+		});
+		this.datachannels.get(dc_id).send(message);
 	}
 
 	/*Reciving peers notifications*/
