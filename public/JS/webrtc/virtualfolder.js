@@ -1,10 +1,3 @@
-const CODES = {
-	set_remote_files_infos : 0,
-	del_remote_file  : 1,
-	send_local_files_infos : 2,
-	peer_warning : 3
-};
-
 function stract_file_infos(file,file_id)
 {
 	return {file_id:file_id,name:file.name}
@@ -17,46 +10,42 @@ class virtualFolder
 		this.local_files = new Map();
 		this.remote_files = new Map();
 		this.datachannels = new Map();
-		this.onCloseDataChannel = (datachannel,id) => {console.log(`Datachannel id ${id} closed`)};
+		this.onNewRemoteFile = (file,dc_id) => {console.log(`new remote file ${file}`)};
 	}
 
 	/*Adding and and Config a new Peer's datachannel*/
 	
 	//Adds a new data channel
-	add_datachannel(datachannel,id)
+	add_datachannel(datachannel,dc_id)
 	{
 		//TODO:Handle new datachannel
-		console.log(`Adding datachannel to socket id ${id}`);
-		this.datachannels.set(id,datachannel);
-		this.handle_open_datachannel(datachannel,id);
+		console.log(`Adding datachannel to socket id ${dc_id}`);
+		this.datachannels.set(dc_id,datachannel);
+		this.remote_files.set(dc_id,{});
+		this.handle_open_datachannel(datachannel,dc_id);
 	}
 
-	handle_datachannel_error(id,error)
-	{
-		
-	}
-	
 	//Handles this.datachannels[id] open event
-	handle_open_datachannel(datachannel,id)
+	handle_open_datachannel(datachannel,dc_id)
 	{
-		console.log(`Opened datachannel with sock id ${id}`);
+		console.log(`Opened datachannel with sock id ${dc_id}`);
 		const message = JSON.stringify({code:'send_local_files_infos'});
 		datachannel.send(message);
-	}
+	}i
 	
 	//Handles data sent by this.datachannel[id]. 
-	handle_datachannel_message(message,id)
+	handle_datachannel_message(message,dc_id)
 	{
 		const obj = JSON.parse(message);
 		const code = obj.code;
 		const code_handlers = {
-			set_remote_files_infos : (data) => console.log('set_remote_files_infos') ,
-			del_remote_file : (data) => console.log('set_remote_files_infos') ,
-			send_local_files_infos : (data) => this.send_local_files_infos(id) ,
-			peer_warning : (data) => console.log(`peer message ${data}`)
+			set_remote_files_infos : (data,dc_id) => this.add_remote_files(data,dc_id) ,
+			del_remote_file : (data,dc_id) => this.remove_remote_file(data,dc_id),
+			send_local_files_infos : (data,dc_id) => this.send_local_files_infos(dc_id) ,
+			peer_warning : (data,dc_id) => console.log(`peer message ${data}`)
 		};
 		//TODO:Handle a invalid code
-		code_handlers[code](obj.data);
+		code_handlers[code](obj.data,dc_id);
 	}
 
 	/* Adding files and notify current peers */
@@ -85,7 +74,12 @@ class virtualFolder
 		};
 		this.broadcast_data(data);
 	}
-	
+
+	remove_local_files(file)
+	{
+
+	}
+
 	//Sends all local files infos to a peer
 	send_local_files_infos(dc_id)
 	{
@@ -102,6 +96,20 @@ class virtualFolder
 	}
 
 	/*Reciving peers notifications*/
+	
+	add_remote_files(files,dc_id)
+	{
+		for(const [file_id,file] of Object.entries(files))
+		{
+			this.remote_files.get(dc_id)[file_id] = file;
+			this.onNewRemoteFile(file,dc_id);
+		}
+	}
+
+	remove_remote_files(file_ids,dc_id)
+	{
+
+	}
 
 	/*Requesting and Sending files*/
 }

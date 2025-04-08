@@ -31,7 +31,13 @@
 			client.onDataChannelMessage = (message,id) => {
 				console.log(`Message from ${id} : ${message}`);
 				vfolder.handle_datachannel_message(message,id);
-			};	
+			};
+			vfolder.onNewRemoteFile = (file,dc_id) => {
+				const div = document.getElementById('remote-files');
+				const p = document.createElement("p");
+				p.innerHTML = `${dc_id} ${file.name}`;
+				div.appendChild(p);
+			};
 			document.getElementById('fileinput').addEventListener('change', (event) => {
 				if(event.target.files)
 				{
