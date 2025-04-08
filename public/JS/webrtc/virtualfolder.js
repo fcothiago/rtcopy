@@ -62,11 +62,11 @@ class virtualFolder
 	add_local_files(files)
 	{
 		let files_infos = {};
-		for(const i in files)
+		for(const [i] in Object.entries(files))
 		{
 			const file = files[i] , file_id = crypto.randomUUID();
 			this.local_files.set(file_id,file);
-			files_infos[file_id] = stract_file_infos(file,file_id);
+			files_infos[file_id] = stract_file_infos(file);
 		}
 		const data = { 
 			code:'set_remote_files_infos',
@@ -96,7 +96,6 @@ class virtualFolder
 	}
 
 	/*Reciving peers notifications*/
-	
 	add_remote_files(files,dc_id)
 	{
 		for(const [file_id,file] of Object.entries(files))
