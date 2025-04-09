@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
+		<link rel="stylesheet" href="/CSS/folder.css"/>
 		<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
 		<script src="/JS/webrtc/signalingserver.js"></script>
 		<script src="/JS/webrtc/virtualfolder.js"></script>
@@ -9,14 +10,18 @@
 	</head>
 	<body>
 		<header>
-			<p>Virtual Folder</p>
+			<!--<p>Virtual Folder</p>-->
 		</header>
 		<main>
-			<div id="user-area">
+			<section id="user-area">
 				<input type="file" id="fileinput" multiple/>	
-			</div>
-			<div id="remote-files">
-			</div>
+			</section>
+			<section id="remote-files-area">
+				<ul id="directory">
+				</ul>
+			</section>
+			<section id="preview-area">
+			</section>
 		</main>
 		<script>
 			const params = <%- JSON.stringify(params) %>;
@@ -25,25 +30,63 @@
 			const socket = io("http://localhost:7777");
 			const client = new signalingClient(socket,folder_name,folder_pass);
 			const vfolder = new virtualFolder();	
+			
 			client.onDataChannelOpen = (datachannel,id) => {
 				vfolder.add_datachannel(datachannel,id);
 			};
+
 			client.onDataChannelMessage = (message,id) => {
 				console.log(`Message from ${id} : ${message}`);
 				vfolder.handle_datachannel_message(message,id);
 			};
+
 			vfolder.onNewRemoteFile = (file,dc_id) => {
-				const div = document.getElementById('remote-files');
-				const p = document.createElement("p");
-				p.innerHTML = `${dc_id} ${file.name}`;
-				div.appendChild(p);
+				const ul = document.getElementById('directory');
+				const li = document.createElement("li");
+				const span = document.createElement("span");
+				span.innerHTML = `${file.name}`; 		
+				li.className = `remote-file-${dc_id}`;
+				li.id = `file-${file.file_id}`;
+				li.appendChild(span);
+				ul.appendChild(li);
 			};
+
+			vfolder.onNewLocalFile = (file) => {
+				const ul = document.getElementById('directory');
+				const li = document.createElement("li");
+				const a  = document.createElement("a");
+				const span = document.createElement("span");
+
+				span.innerHTML = `${file.name}`; 		
+
+				a.href = '#';
+				a.innerHTML = 'remove';
+				a.addEventListener('click',(event) => {
+					event.preventDefault();
+					vfolder.delete_local_files([file.file_id]);
+					li.remove();
+				})
+
+				li.appendChild(a);
+				//li.className = `remote-file ${dc_id}`;
+				
+				li.appendChild(span);
+				li.appendChild(a);
+				ul.appendChild(li);	
+			};
+
+			vfolder.onRemoteFileRemoval = (file,dc_id) => {
+				const query = document.querySelectorAll(`.remote-file-${dc_id}#file-${file.file_id}`);
+				query.forEach( element => {element.remove()});
+			};
+
 			document.getElementById('fileinput').addEventListener('change', (event) => {
 				if(event.target.files)
 				{
 					vfolder.add_local_files(event.target.files);
 				}
 			});
+
 			client.init_signaling_client();
 		</script>
 	</body>

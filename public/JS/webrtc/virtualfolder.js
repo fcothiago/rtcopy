@@ -10,7 +10,10 @@ class virtualFolder
 		this.local_files = new Map();
 		this.remote_files = new Map();
 		this.datachannels = new Map();
-		this.onNewRemoteFile = (file,dc_id) => {console.log(`new remote file ${file}`)};
+		this.onNewLocalFile = (file) => {console.log(`new local file ${file.file_id}`)};
+		this.onNewRemoteFile = (file,dc_id) => {console.log(`new remote file ${file.file_id}`)};
+		this.onRemoteFileRemoval = (file,dc_id) => {console.log(`removing remote file ${file.file_id} from ${dc_id}`)};
+		this.onLocalFileRemoval = (file) => {console.log(`removing local file ${file.file_id}`)};
 	}
 
 	/*Adding and and Config a new Peer's datachannel*/
@@ -40,7 +43,7 @@ class virtualFolder
 		const code = obj.code;
 		const code_handlers = {
 			set_remote_files_infos : (data,dc_id) => this.add_remote_files(data,dc_id) ,
-			del_remote_file : (data,dc_id) => this.remove_remote_file(data,dc_id),
+			del_remote_files : (data,dc_id) => this.delete_remote_files(data,dc_id),
 			send_local_files_infos : (data,dc_id) => this.send_local_files_infos(dc_id) ,
 			peer_warning : (data,dc_id) => console.log(`peer message ${data}`)
 		};
@@ -66,18 +69,30 @@ class virtualFolder
 		{
 			const file = files[i] , file_id = crypto.randomUUID();
 			this.local_files.set(file_id,file);
-			files_infos[file_id] = stract_file_infos(file);
+			files_infos[file_id] = stract_file_infos(file,file_id);
+			this.onNewLocalFile(files_infos[file_id]);
 		}
-		const data = { 
+		const message = { 
 			code:'set_remote_files_infos',
 			data:files_infos 
 		};
-		this.broadcast_data(data);
+		this.broadcast_data(message);
 	}
 
-	remove_local_files(file)
+	//Remove one or more local files with id in the list fil_ids and notify all peers about removal.
+	delete_local_files(file_ids)
 	{
-
+		for(const index in file_ids)
+		{
+			const id = file_ids[index];
+			this.local_files.delete(id);
+		}
+		const message = {
+			code:'del_remote_files',
+			data:file_ids
+		};
+		console.log(`file_ids ${file_ids}`);
+		this.broadcast_data(message);
 	}
 
 	//Sends all local files infos to a peer
@@ -100,14 +115,21 @@ class virtualFolder
 	{
 		for(const [file_id,file] of Object.entries(files))
 		{
+			console.log(`removing ${file_id} from ${dc_id}`);
 			this.remote_files.get(dc_id)[file_id] = file;
 			this.onNewRemoteFile(file,dc_id);
 		}
 	}
 
-	remove_remote_files(file_ids,dc_id)
+	delete_remote_files(file_ids,dc_id)
 	{
-
+		for(const index in file_ids)
+		{
+			const file_id = file_ids[index];
+			const file = structuredClone(this.remote_files.get(dc_id)[file_id]);
+			this.onRemoteFileRemoval(file,dc_id);
+			delete this.remote_files.get(dc_id)[file_id];
+		}
 	}
 
 	/*Requesting and Sending files*/
