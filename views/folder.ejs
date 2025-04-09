@@ -43,11 +43,18 @@
 			vfolder.onNewRemoteFile = (file,dc_id) => {
 				const ul = document.getElementById('directory');
 				const li = document.createElement("li");
+				const a  = document.createElement("");
 				const span = document.createElement("span");
-				span.innerHTML = `${file.name}`; 		
+				span.innerHTML = `${file.name}`; 
+				a.href = '#';
+				a.innerHTML = 'download';
+				a.addEventListener('click',(event) =>{
+					event.preventDefault();
+				});
 				li.className = `remote-file-${dc_id}`;
 				li.id = `file-${file.file_id}`;
 				li.appendChild(span);
+				li.appendChild(a);
 				ul.appendChild(li);
 			};
 
@@ -56,9 +63,7 @@
 				const li = document.createElement("li");
 				const a  = document.createElement("a");
 				const span = document.createElement("span");
-
 				span.innerHTML = `${file.name}`; 		
-
 				a.href = '#';
 				a.innerHTML = 'remove';
 				a.addEventListener('click',(event) => {
@@ -66,10 +71,7 @@
 					vfolder.delete_local_files([file.file_id]);
 					li.remove();
 				})
-
 				li.appendChild(a);
-				//li.className = `remote-file ${dc_id}`;
-				
 				li.appendChild(span);
 				li.appendChild(a);
 				ul.appendChild(li);	
