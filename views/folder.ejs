@@ -6,6 +6,7 @@
 		<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
 		<script src="/JS/webrtc/signalingserver.js"></script>
 		<script src="/JS/webrtc/virtualfolder.js"></script>
+		<script src="/JS/webrtc/downloadmanager.js"></script>
 		<title>Virtual Folder</title>
 	</head>
 	<body>
@@ -30,7 +31,8 @@
 			const socket = io("http://localhost:7777");
 			const client = new signalingClient(socket,folder_name,folder_pass);
 			const vfolder = new virtualFolder();	
-			
+			const manager = new downloadManager();
+
 			client.onDataChannelOpen = (datachannel,id) => {
 				vfolder.add_datachannel(datachannel,id);
 			};
@@ -42,14 +44,17 @@
 
 			vfolder.onNewRemoteFile = (file,dc_id) => {
 				const ul = document.getElementById('directory');
-				const li = document.createElement("li");
-				const a  = document.createElement("");
-				const span = document.createElement("span");
+				const li = document.createElement('li');
+				const a  = document.createElement('a');
+				const span = document.createElement('span');
 				span.innerHTML = `${file.name}`; 
 				a.href = '#';
 				a.innerHTML = 'download';
 				a.addEventListener('click',(event) =>{
 					event.preventDefault();
+					const datachannel = vfolder.datachannels.get(dc_id);
+					const worker_id = manager.start_download(file,datachannel);
+					console.log(`Download started dc ${dc_id} file_id ${file.file_id} worker_id ${worker_id}`);
 				});
 				li.className = `remote-file-${dc_id}`;
 				li.id = `file-${file.file_id}`;

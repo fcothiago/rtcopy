@@ -1,6 +1,8 @@
+const CHUNK_SIZE_BYTES = 1000;
+
 function stract_file_infos(file,file_id)
 {
-	return {file_id:file_id,name:file.name}
+	return {file_id:file_id,name:file.name,size:file.size}
 }
 
 class virtualFolder
@@ -14,6 +16,7 @@ class virtualFolder
 		this.onNewRemoteFile = (file,dc_id) => {console.log(`new remote file ${file.file_id}`)};
 		this.onRemoteFileRemoval = (file,dc_id) => {console.log(`removing remote file ${file.file_id} from ${dc_id}`)};
 		this.onLocalFileRemoval = (file) => {console.log(`removing local file ${file.file_id}`)};
+		this.onDatachunkRecival = (file_id,dc_id,chunk) => {};
 	}
 
 	/*Adding and and Config a new Peer's datachannel*/
@@ -22,7 +25,6 @@ class virtualFolder
 	add_datachannel(datachannel,dc_id)
 	{
 		//TODO:Handle new datachannel
-		console.log(`Adding datachannel to socket id ${dc_id}`);
 		this.datachannels.set(dc_id,datachannel);
 		this.remote_files.set(dc_id,{});
 		this.handle_open_datachannel(datachannel,dc_id);
@@ -42,9 +44,11 @@ class virtualFolder
 		const obj = JSON.parse(message);
 		const code = obj.code;
 		const code_handlers = {
-			set_remote_files_infos : (data,dc_id) => this.add_remote_files(data,dc_id) ,
+			set_remote_files_infos : (data,dc_id) => this.add_remote_files(data,dc_id),
 			del_remote_files : (data,dc_id) => this.delete_remote_files(data,dc_id),
-			send_local_files_infos : (data,dc_id) => this.send_local_files_infos(dc_id) ,
+			send_local_files_infos : (data,dc_id) => this.send_local_files_infos(dc_id),
+			send_datachunks: (data,dc_id) => {this.send_datachunck(data,dc_id)};
+			recive_datachunk: (data,dc_id) => {this.recive_datachunk(data,dc_id)};
 			peer_warning : (data,dc_id) => console.log(`peer message ${data}`)
 		};
 		//TODO:Handle a invalid code
@@ -91,7 +95,6 @@ class virtualFolder
 			code:'del_remote_files',
 			data:file_ids
 		};
-		console.log(`file_ids ${file_ids}`);
 		this.broadcast_data(message);
 	}
 
@@ -110,12 +113,11 @@ class virtualFolder
 		this.datachannels.get(dc_id).send(message);
 	}
 
-	/*Reciving peers notifications*/
+	/*Recive peers notifications*/
 	add_remote_files(files,dc_id)
 	{
 		for(const [file_id,file] of Object.entries(files))
 		{
-			console.log(`removing ${file_id} from ${dc_id}`);
 			this.remote_files.get(dc_id)[file_id] = file;
 			this.onNewRemoteFile(file,dc_id);
 		}
@@ -131,6 +133,43 @@ class virtualFolder
 			delete this.remote_files.get(dc_id)[file_id];
 		}
 	}
+	/*Sending/reciving Datachunks*/
+	request_datachunk(start,chuncks,file_id,dc_id)
+	{
+		const dc = this.datachannels.get(dc_id);
+		const infos = {
+			file_id:file_id,
+			start:start,
+			chuncks:chunks
+		};
+		const message = JSON.stringify({
+			code:'send_datachunks',
+			data:infos
+		});
+		dc.send(message);
+	}
 
-	/*Requesting and Sending files*/
+	send_datachunks(infos,dc_id)
+	{
+		const file_id,chunks,start = infos.file_id,infos.chunks,indos.start;
+		const file = this.local_files.get(file_id).getFile();
+		const datachannel = this.datachannels[dc_id];
+		for(let index = start; i < start + chunks*CHUNCK_SIZE_BYTES ; i += CHUNK_SIZE_BYTES)
+		{
+			const chunk  = file.slice(offset, offset + CHUNK_SIZE_BYTES);
+			const buffer = await chunk.arrayBuffer(); 
+			const infos = {
+			}
+			const message = {
+				code : 'recive'
+			};
+			dc.send();
+		}
+	}
+
+	recive_datachunk(infos,dc_id)
+	{
+
+	}
+
 }
