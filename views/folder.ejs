@@ -52,9 +52,8 @@
 				a.innerHTML = 'download';
 				a.addEventListener('click',(event) =>{
 					event.preventDefault();
-					const datachannel = vfolder.datachannels.get(dc_id);
-					const worker_id = manager.start_download(file,datachannel);
-					console.log(`Download started dc ${dc_id} file_id ${file.file_id} worker_id ${worker_id}`);
+					vfolder.request_datachunks(0,10,file.file_id,dc_id);
+					console.log(`Download started dc ${dc_id} file_id ${file.file_id}`);
 				});
 				li.className = `remote-file-${dc_id}`;
 				li.id = `file-${file.file_id}`;

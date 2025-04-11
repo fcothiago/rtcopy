@@ -1,5 +1,26 @@
 const CHUNK_SIZE_BYTES = 1000;
 
+function file_to_base64(file)
+{
+	return new Promise((resolve,reject) => {
+		const reader = new FileReader();
+		reader.onload = () => resolve(reader.result);
+		reader.onerror = (error) => reject(errot);
+		reader.readAsDataURL(file);
+	});
+}
+
+async function get_file_chunks_base64(start,end,chunk_size,file)
+{
+	let chunks = {};
+	for(let i = start ; i < end ; i++)
+	{
+		const slice = file.slice(i*chunk_size,(i+1)*chunk_size);
+		chunks[i] = await file_to_base64(slice);
+	}
+	return chunks;
+}
+
 function stract_file_infos(file,file_id)
 {
 	return {file_id:file_id,name:file.name,size:file.size}
@@ -21,7 +42,7 @@ class virtualFolder
 
 	/*Adding and and Config a new Peer's datachannel*/
 	
-	//Adds a new data channel
+	//Adds a new data channel]
 	add_datachannel(datachannel,dc_id)
 	{
 		//TODO:Handle new datachannel
@@ -36,7 +57,7 @@ class virtualFolder
 		console.log(`Opened datachannel with sock id ${dc_id}`);
 		const message = JSON.stringify({code:'send_local_files_infos'});
 		datachannel.send(message);
-	}i
+	}
 	
 	//Handles data sent by this.datachannel[id]. 
 	handle_datachannel_message(message,dc_id)
@@ -47,8 +68,8 @@ class virtualFolder
 			set_remote_files_infos : (data,dc_id) => this.add_remote_files(data,dc_id),
 			del_remote_files : (data,dc_id) => this.delete_remote_files(data,dc_id),
 			send_local_files_infos : (data,dc_id) => this.send_local_files_infos(dc_id),
-			send_datachunks: (data,dc_id) => {this.send_datachunck(data,dc_id)};
-			recive_datachunk: (data,dc_id) => {this.recive_datachunk(data,dc_id)};
+			send_datachunks: (data,dc_id) => this.send_datachunks(data,dc_id),
+			recive_datachunk: (data,dc_id) => this.recive_datachunk(data,dc_id),
 			peer_warning : (data,dc_id) => console.log(`peer message ${data}`)
 		};
 		//TODO:Handle a invalid code
@@ -134,13 +155,13 @@ class virtualFolder
 		}
 	}
 	/*Sending/reciving Datachunks*/
-	request_datachunk(start,chuncks,file_id,dc_id)
+	request_datachunks(start,chunks,file_id,dc_id)
 	{
 		const dc = this.datachannels.get(dc_id);
 		const infos = {
 			file_id:file_id,
 			start:start,
-			chuncks:chunks
+			chunks:chunks
 		};
 		const message = JSON.stringify({
 			code:'send_datachunks',
@@ -149,27 +170,30 @@ class virtualFolder
 		dc.send(message);
 	}
 
-	send_datachunks(infos,dc_id)
+	async send_datachunks(infos,dc_id)
 	{
-		const file_id,chunks,start = infos.file_id,infos.chunks,indos.start;
-		const file = this.local_files.get(file_id).getFile();
-		const datachannel = this.datachannels[dc_id];
-		for(let index = start; i < start + chunks*CHUNCK_SIZE_BYTES ; i += CHUNK_SIZE_BYTES)
+		const file = this.local_files.get(infos.file_id);
+		const datachannel = this.datachannels.get(dc_id);
+		const start = infos.start , end = infos.start + infos.chunks;
+		const chunks_base64 = await get_file_chunks_base64(start,end,CHUNK_SIZE_BYTES,file);	
+		for(const [chunk_index,chunk_b64] of Object.entries(chunks_base64))
 		{
-			const chunk  = file.slice(offset, offset + CHUNK_SIZE_BYTES);
-			const buffer = await chunk.arrayBuffer(); 
-			const infos = {
-			}
-			const message = {
-				code : 'recive'
+			const data = {
+				file_id:infos.file_id,	
+				dc_id:dc_id,
+				index:chunk_index,
+				chunk:chunk_b64
 			};
-			dc.send();
+			const message = JSON.stringify({
+				code:'recive_datachunk',
+				data:data
+			});
+			datachannel.send(message);
 		}
 	}
 
 	recive_datachunk(infos,dc_id)
 	{
-
+		console.log(`recived datachunk ${infos.chunk_index}`);
 	}
-
 }
