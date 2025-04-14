@@ -31,16 +31,28 @@
 			const socket = io("http://localhost:7777");
 			const client = new signalingClient(socket,folder_name,folder_pass);
 			const vfolder = new virtualFolder();	
-			const manager = new downloadManager();
+			const manager = new downloadManager(vfolder);
 
 			client.onDataChannelOpen = (datachannel,id) => {
 				vfolder.add_datachannel(datachannel,id);
 			};
 
 			client.onDataChannelMessage = (message,id) => {
-				console.log(`Message from ${id} : ${message}`);
 				vfolder.handle_datachannel_message(message,id);
 			};
+
+			vfolder.onDatachunkRecived = (infos,dc_id) => {
+				manager.recive_datachunk(infos,dc_id);
+			};
+
+			document.getElementById('fileinput').addEventListener('change', (event) => {
+				if(event.target.files)
+				{
+					vfolder.add_local_files(event.target.files);
+				}
+			});
+
+			// DOM Handling
 
 			vfolder.onNewRemoteFile = (file,dc_id) => {
 				const ul = document.getElementById('directory');
@@ -52,7 +64,7 @@
 				a.innerHTML = 'download';
 				a.addEventListener('click',(event) =>{
 					event.preventDefault();
-					vfolder.request_datachunks(0,10,file.file_id,dc_id);
+					manager.start_download(file.file_id,dc_id);
 					console.log(`Download started dc ${dc_id} file_id ${file.file_id}`);
 				});
 				li.className = `remote-file-${dc_id}`;
@@ -86,12 +98,7 @@
 				query.forEach( element => {element.remove()});
 			};
 
-			document.getElementById('fileinput').addEventListener('change', (event) => {
-				if(event.target.files)
-				{
-					vfolder.add_local_files(event.target.files);
-				}
-			});
+			// Starting Connection with Signaling Client
 
 			client.init_signaling_client();
 		</script>

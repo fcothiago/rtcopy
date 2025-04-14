@@ -16,14 +16,18 @@ async function get_file_chunks_base64(start,end,chunk_size,file)
 	for(let i = start ; i < end ; i++)
 	{
 		const slice = file.slice(i*chunk_size,(i+1)*chunk_size);
-		chunks[i] = await file_to_base64(slice);
+		chunks[i] = [await file_to_base64(slice),slice.size];
 	}
 	return chunks;
 }
 
 function stract_file_infos(file,file_id)
 {
-	return {file_id:file_id,name:file.name,size:file.size}
+	return {
+			file_id:file_id,
+			name:file.name,
+			size:file.size
+		};
 }
 
 class virtualFolder
@@ -37,7 +41,7 @@ class virtualFolder
 		this.onNewRemoteFile = (file,dc_id) => {console.log(`new remote file ${file.file_id}`)};
 		this.onRemoteFileRemoval = (file,dc_id) => {console.log(`removing remote file ${file.file_id} from ${dc_id}`)};
 		this.onLocalFileRemoval = (file) => {console.log(`removing local file ${file.file_id}`)};
-		this.onDatachunkRecival = (file_id,dc_id,chunk) => {};
+		this.onDatachunkReceived = (infos,dc_id) => {console.log(`recive new datachunk dc ${dc_id} file_id ${infos.file_id} index ${infos.index}`);};
 	}
 
 	/*Adding and and Config a new Peer's datachannel*/
@@ -176,13 +180,14 @@ class virtualFolder
 		const datachannel = this.datachannels.get(dc_id);
 		const start = infos.start , end = infos.start + infos.chunks;
 		const chunks_base64 = await get_file_chunks_base64(start,end,CHUNK_SIZE_BYTES,file);	
-		for(const [chunk_index,chunk_b64] of Object.entries(chunks_base64))
+		for(const [chunk_index,chunk_infos] of Object.entries(chunks_base64))
 		{
+			const [chunk_b64,chunk_size] = chunk_infos;
 			const data = {
 				file_id:infos.file_id,	
-				dc_id:dc_id,
-				index:chunk_index,
-				chunk:chunk_b64
+				chunk_index:chunk_index,
+				chunk_size:chunk_size,
+				chunk_data:chunk_b64,
 			};
 			const message = JSON.stringify({
 				code:'recive_datachunk',
@@ -194,6 +199,6 @@ class virtualFolder
 
 	recive_datachunk(infos,dc_id)
 	{
-		console.log(`recived datachunk ${infos.chunk_index}`);
+		this.onDatachunkRecived(infos,dc_id);
 	}
 }
