@@ -16,7 +16,8 @@ async function get_file_chunks_base64(start,end,chunk_size,file)
 	for(let i = start ; i < end ; i++)
 	{
 		const slice = file.slice(i*chunk_size,(i+1)*chunk_size);
-		chunks[i] = [await file_to_base64(slice),slice.size];
+		const data_b64 = ( await file_to_base64(slice) ).split(',')[1]; //remove "data:*/*;base64," prefix
+		chunks[i] = [data_b64,slice.size];
 	}
 	return chunks;
 }
@@ -26,7 +27,8 @@ function stract_file_infos(file,file_id)
 	return {
 			file_id:file_id,
 			name:file.name,
-			size:file.size
+			size:file.size,
+			type:file.type
 		};
 }
 
