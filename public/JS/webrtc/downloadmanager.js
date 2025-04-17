@@ -42,6 +42,11 @@ class blob_file_handler
 		this.worker.postMessage([chunks_b64_array,this.blob,this.mime_type]);
 	}
 
+	finish_download()
+	{
+		this.worker.terminate();
+	}
+
 	download_file()
 	{
 
@@ -90,24 +95,24 @@ class downloadManager
 		return flag ? handler : null;
 	}
 
-	async start_download(file_id,dc_id)
+	async start_download(file_id,dc_id,onDownloadUpdate)
 	{
 		const key = gen_download_key(file_id,dc_id) , file=this.folder.remote_files.get(dc_id)[file_id];
+		const file_size = this.folder.remote_files.get(dc_id)[file_id].size;
 		if(this.current_downloads.has(key) || !file)
 			return;
 		const file_handler = await this.create_file_handler(file);
 		if(!file_handler)
-		{
-			console.log('Failed to create file');
 			return;
-		}
 		this.current_downloads.set(key,
 		{
 			chunks_in_memory : {},
 			file_handler : file_handler,
+			file_size : file_size,
 			waiting_chunk_indexes : gen_range(0,CHUNK_COUNT),
 			bytes_recived : 0,
-			finished : false
+			finished : false,
+			download_update_callback : onDownloadUpdate
 		});
 		this.folder.request_datachunks(0,CHUNK_COUNT,file_id,dc_id);
 	}
@@ -116,34 +121,28 @@ class downloadManager
 	{
 		const key = gen_download_key(infos.file_id,dc_id);		
 		const download = this.current_downloads.get(key);
-		const file_size = this.folder.remote_files.get(dc_id)[infos.file_id].size;
 		if( (!download) || download.finished)
 			return;
 		if(download.waiting_chunk_indexes.delete(infos.chunk_index) )
 			return;
 		download.bytes_recived += infos.chunk_size;
 		download.chunks_in_memory[infos.chunk_index] = infos.chunk_data;
-
-		if(Object.entries(download.chunks_in_memory).length >= CHUNK_COUNT || download.bytes_recived >= file_size)
+		if((Object.entries(download.chunks_in_memory).length >= CHUNK_COUNT) || (download.bytes_recived >= download.file_size))
 			this.process_datachunks(infos,download,dc_id);
 	}
 
 	process_datachunks(infos,download,dc_id)
 	{
-		const file_size = this.folder.remote_files.get(dc_id)[infos.file_id].size;
 		const last_index = Object.entries(download.chunks_in_memory).reduce( (a,b) => a > b ? a : b );
-		const onFinished = (e) => 
+		const onFinished = () => 
 		{
-			if(download.bytes_recived >= file_size)
-			{	
-				console.log('finished download');
-				const url = URL.createObjectURL(download.file_handler.blob);
-				const a = document.createElement("a");
-				a.href = url;
-				a.innerHTML = "download";
-				document.body.appendChild(a);
-				download.finished = true;
-				return;//Finish download
+			download.finished = download.bytes_recived >= download.file_size;
+			download.download_update_callback(download);
+			if(download.finished)
+			{
+				const key = gen_download_key(infos.file_id,dc_id);		
+				this.current_downloads.delete(key);
+				return;
 			}
 			this.folder.request_datachunks(last_index+1,CHUNK_COUNT,infos.file_id,dc_id);	
 		};

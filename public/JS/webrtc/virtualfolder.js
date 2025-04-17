@@ -16,8 +16,8 @@ async function get_file_chunks_base64(start,end,chunk_size,file)
 	for(let i = start ; i < end ; i++)
 	{
 		const start = i*chunk_size;
-		const end   = (i+1)*chunk_size >= file.size ? (i+1)*chunk_size : file.size;
-		const slice = file.slice(i*chunk_size,start,end);
+		const end   = ( (i+1)*chunk_size ) <= file.size  ? (i+1)*chunk_size : file.size;
+		const slice = file.slice(start,end);
 		const data_b64 = ( await file_to_base64(slice) ).split(',')[1]; //remove "data:*/*;base64," prefix
 		chunks[i] = [data_b64,slice.size];
 		if(end >= file.size)

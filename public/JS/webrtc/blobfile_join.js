@@ -1,6 +1,6 @@
 function base64_to_Uint8array(chunks_b64_array)
 {
-	const full_chunk = atob(chunks_b64_array.join("");
+	const full_chunk = atob(chunks_b64_array.join(""));
 	const bytes = new Uint8Array(full_chunk.length);
 	for(let i = 0; i < full_chunk.length; i++)
 		bytes[i] = full_chunk.charCodeAt(i);
@@ -13,7 +13,6 @@ self.onmessage = (e) => {
 	const chunks_b64_array = [];
 	for(let [i] in Object.entries(chunks_b64).sort())
 	{
-		console.log(i);
 		chunks_b64_array.push(chunks_b64[i]);
 	}
 	const bytes = base64_to_Uint8array(chunks_b64_array); 

@@ -61,12 +61,29 @@
 				const span = document.createElement('span');
 				span.innerHTML = `${file.name}`; 
 				a.href = '#';
-				a.innerHTML = 'download';
-				a.addEventListener('click',(event) =>{
+				a.innerHTML = 'request file';
+				a.onclick = (event) =>
+				{
 					event.preventDefault();
-					manager.start_download(file.file_id,dc_id);
-					console.log(`Download started dc ${dc_id} file_id ${file.file_id}`);
-				});
+					a.onclick = () => {};
+					chunk_recived = (download) =>
+					{
+						if(download.finished)
+						{
+							const url = URL.createObjectURL(download.file_handler.blob);
+							a.innerHTML = 'download';
+							a.href = url;
+						}
+						else
+						{
+							a.innerHTML = `${100*(download.bytes_recived/download.file_size)}%`
+						}
+					}
+					manager.start_download(file.file_id,dc_id,(download) => {
+						chunk_recived(download);
+					});
+					a.innerHTML = "0%";
+				};
 				li.className = `remote-file-${dc_id}`;
 				li.id = `file-${file.file_id}`;
 				li.appendChild(span);
