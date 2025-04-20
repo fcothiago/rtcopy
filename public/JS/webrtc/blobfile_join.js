@@ -1,21 +1,30 @@
-function base64_to_Uint8array(chunks_b64_array)
+function base64_to_uint8array(chunks_b64_array)
 {
-	const full_chunk = atob(chunks_b64_array.join(""));
-	const bytes = new Uint8Array(full_chunk.length);
-	for(let i = 0; i < full_chunk.length; i++)
-		bytes[i] = full_chunk.charCodeAt(i);
-	return bytes;
+	const parsed_chunks_array = chunks_b64_array.map( (chunk_b64) => atob(chunk_b64) );
+	const full_chunk_length = parsed_chunks_array.reduce( (sum,arr) => sum + arr.length  , 0 )
+	const full_chunk = new Uint8Array(full_chunk_length);
+	let index = 0;
+	for(const chunk of parsed_chunks_array)
+	{
+		for(let i = 0; i < chunk.length ; i++)
+		{
+			full_chunk[index] = chunk.charCodeAt(i);
+			index += 1;
+		}
+	}
+	return full_chunk;  
 }
 
 self.onmessage = (e) => {
-	console.log('joining blob');
 	const [chunks_b64,blob_file,mime_type] = e.data;
+	if(!chunks_b64)
+		return;
 	const chunks_b64_array = [];
-	for(let [i] in Object.entries(chunks_b64).sort())
+	for(let [key,value] of Object.entries(chunks_b64))
 	{
-		chunks_b64_array.push(chunks_b64[i]);
+		chunks_b64_array.push(value);
 	}
-	const bytes = base64_to_Uint8array(chunks_b64_array); 
+	const bytes = base64_to_uint8array(chunks_b64_array); 
 	const new_blob = new Blob([blob_file,bytes],{type:mime_type});
 	self.postMessage({finished:true,blob:new_blob});
 };

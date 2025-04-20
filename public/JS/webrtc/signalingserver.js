@@ -20,7 +20,7 @@ async function create_peer(socket,reciver)
 		if(event.candidate)
 			socket.emit("rtc-icecandidate",{reciver:reciver,icecandidate:event.candidate});
 	};
-	const datachannel =  await peer.createDataChannel("datachannel", { negotiated: true, id: 0 } );
+	const datachannel =  await peer.createDataChannel("datachannel", { negotiated: true, id: 0,  } );
 
 	return [peer,datachannel];
 }

@@ -15,12 +15,12 @@ async function get_file_chunks_base64(start,end,chunk_size,file)
 	let chunks = {};
 	for(let i = start ; i < end ; i++)
 	{
-		const start = i*chunk_size;
-		const end   = ( (i+1)*chunk_size ) <= file.size  ? (i+1)*chunk_size : file.size;
-		const slice = file.slice(start,end);
+		const slice_start = i*chunk_size;
+		const slice_end   = ( (i+1)*chunk_size ) <= file.size ? (i+1)*chunk_size : file.size;
+		const slice = file.slice(slice_start,slice_end);
 		const data_b64 = ( await file_to_base64(slice) ).split(',')[1]; //remove "data:*/*;base64," prefix
 		chunks[i] = [data_b64,slice.size];
-		if(end >= file.size)
+		if(slice_end >= file.size)
 			break
 	}
 	return chunks;
@@ -188,12 +188,13 @@ class virtualFolder
 		const chunks_base64 = await get_file_chunks_base64(start,end,CHUNK_SIZE_BYTES,file);	
 		for(const [chunk_index,chunk_infos] of Object.entries(chunks_base64))
 		{
+			console.log(`chunk index ${chunk_index}`);
 			const [chunk_b64,chunk_size] = chunk_infos;
 			const data = {
 				file_id:infos.file_id,	
 				chunk_index:chunk_index,
 				chunk_size:chunk_size,
-				chunk_data:chunk_b64,
+				chunk_data:chunk_b64
 			};
 			const message = JSON.stringify({
 				code:'recive_datachunk',

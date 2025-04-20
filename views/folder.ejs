@@ -62,7 +62,7 @@
 				span.innerHTML = `${file.name}`; 
 				a.href = '#';
 				a.innerHTML = 'request file';
-				a.onclick = (event) =>
+				a.onclick = async (event) =>
 				{
 					event.preventDefault();
 					a.onclick = () => {};
@@ -79,7 +79,7 @@
 							a.innerHTML = `${100*(download.bytes_recived/download.file_size)}%`
 						}
 					}
-					manager.start_download(file.file_id,dc_id,(download) => {
+					await manager.start_download(file.file_id,dc_id,(download) => {
 						chunk_recived(download);
 					});
 					a.innerHTML = "0%";
