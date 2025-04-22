@@ -20,11 +20,11 @@ self.onmessage = (e) => {
 	if(!chunks_b64)
 		return;
 	const chunks_b64_array = [];
-	for(let [key,value] of Object.entries(chunks_b64))
+	for(const [key,value] of chunks_b64)
 	{
 		chunks_b64_array.push(value);
 	}
 	const bytes = base64_to_uint8array(chunks_b64_array); 
-	const new_blob = new Blob([blob_file,bytes],{type:mime_type});
-	self.postMessage({finished:true,blob:new_blob});
+	//const new_blob = new Blob([blob_file,bytes],{type:mime_type});
+	self.postMessage({finished:true,decoded_data:bytes});
 };
