@@ -17,11 +17,20 @@ function gen_range(start,end)
 
 class blob_file_handler
 {
-	constructor(mime_type)
+	constructor(mime_type,file_id,dc_id)
 	{
 		this.file_data = null;
 		this.mime_type = mime_type;
 		this.worker = new Worker("/JS/webrtc/base64_datajoin.js");
+		this.onFinished = () => {};
+		this.worker.onmessage = (message) => {
+			this.file_data.push(message.data.decoded_data);
+			this.onFinished();
+		};
+		this.worker.onerror = (e) => {
+			console.error(e);
+		};
+
 	}
 
 	create_file()
@@ -30,15 +39,8 @@ class blob_file_handler
 		return true;
 	}
 
-	append_datachunks(chunks_b64_array,onFinished,onError)
+	append_datachunks(chunks_b64_array)
 	{
-		this.worker.onmessage = (message) => {
-			this.file_data.push(message.data.decoded_data);
-			onFinished();
-		};
-		this.worker.onerror = (e) => {
-			console.error(e);
-		};
 		this.worker.postMessage([chunks_b64_array,this.blob,this.mime_type]);
 	}
 
@@ -87,10 +89,20 @@ class downloadManager
 		this.onFinish = (infos,worker_id) => {console.log(`${worker_id} finished download`)};
 	}
 
-	async create_file_handler(file)
+	async create_file_handler(file,file_id,dc_id)
 	{
 		const mime_type = file.type;
 		const handler = 'showSaveFilePicker' in window ? new stream_file_handler(mime_type) : new blob_file_handler(mime_type);
+		handler.onFinished = () => 
+		{
+			const key = gen_download_key(file_id,dc_id);
+			const download = this.current_downloads.get(key);
+			if(download.finished)
+			{
+				this.current_downloads.delete(key);
+			}
+			download.download_update_callback(download);
+		};
 		const flag = await handler.create_file();
 		return flag ? handler : null;
 	}
@@ -101,7 +113,7 @@ class downloadManager
 		const file_size = this.folder.remote_files.get(dc_id)[file_id].size;
 		if(this.current_downloads.has(key) || !file)
 			return;
-		const file_handler = await this.create_file_handler(file);
+		const file_handler = await this.create_file_handler(file,file_id,dc_id);
 		if(!file_handler)
 			return;
 		this.current_downloads.set(key,
@@ -126,31 +138,22 @@ class downloadManager
 		download.waiting_chunks_indexes.delete(infos.chunk_index);
 		download.bytes_recived += infos.chunk_size;
 		download.chunks_in_memory.set(infos.chunk_index,infos.chunk_data);
+		download.finished = download.bytes_recived >= download.file_size;
 		if( (download.waiting_chunks_indexes.size == 0) || (download.bytes_recived >= download.file_size))
 			this.process_datachunks(infos,download,dc_id);
 	}
 
 	process_datachunks(infos,download,dc_id)
 	{
-		const last_index = [...download.chunks_in_memory.entries()].reduce( (a,b) => a[0] >= b[0] ? a[0] : b[0] );
-		const onFinished = () => 
+		download.file_handler.append_datachunks(new Map(download.chunks_in_memory));
+		if(!download.finished)
 		{
-			download.chunks_in_memory.clear() ;
-			download.finished = download.bytes_recived >= download.file_size;
-			download.download_update_callback(download);
-			if(download.finished)
-			{
-				const key = gen_download_key(infos.file_id,dc_id);		
-				this.current_downloads.delete(key);
-				return;
-			}
+			const last_index = [...download.chunks_in_memory.entries()].reduce( (a,b) => a[0] >= b[0] ? a[0] : b[0] );
 			download.waiting_chunks_indexes = gen_range(last_index+1,CHUNK_COUNT);
 			this.folder.request_datachunks(last_index+1,CHUNK_COUNT,infos.file_id,dc_id);	
-		};
-		const onError = (e) => {
-
-		};
-		download.file_handler.append_datachunks(download.chunks_in_memory,onFinished,onError);
+		}
+		download.chunks_in_memory.clear();
+		//download.download_update_callback(download);
 	}
 
 	handle_missing_chunks()
