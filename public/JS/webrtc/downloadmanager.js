@@ -1,4 +1,4 @@
-const CHUNK_COUNT = 100;
+const CHUNK_COUNT = 10000;
 
 function gen_download_key(file_id,dc_id)
 {

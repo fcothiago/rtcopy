@@ -1,31 +1,5 @@
 const CHUNK_SIZE_BYTES = 10000;
 
-function file_to_base64(file)
-{
-	return new Promise((resolve,reject) => {
-		const reader = new FileReader();
-		reader.onload = () => resolve(reader.result);
-		reader.onerror = (error) => reject(errot);
-		reader.readAsDataURL(file);
-	});
-}
-
-async function get_file_chunks_base64(start,end,chunk_size,file)
-{
-	const chunks = new Map();
-	for(let i = start ; i < end ; i++)
-	{
-		const slice_start = i*chunk_size;
-		const slice_end   = ( (i+1)*chunk_size ) <= file.size ? (i+1)*chunk_size : file.size;
-		const slice = file.slice(slice_start,slice_end);
-		const data_b64 = ( await file_to_base64(slice) ).split(',')[1]; //remove "data:*/*;base64," prefix
-		chunks.set(i,[data_b64,slice.size]);
-		if(slice_end >= file.size)
-			break
-	}
-	return chunks;
-}
-
 function stract_file_infos(file,file_id)
 {
 	return {
@@ -43,6 +17,7 @@ class virtualFolder
 		this.local_files = new Map();
 		this.remote_files = new Map();
 		this.datachannels = new Map();
+		this.webworkers = new Map();
 		this.onNewLocalFile = (file) => {console.log(`new local file ${file.file_id}`)};
 		this.onNewRemoteFile = (file,dc_id) => {console.log(`new remote file ${file.file_id}`)};
 		this.onRemoteFileRemoval = (file,dc_id) => {console.log(`removing remote file ${file.file_id} from ${dc_id}`)};
@@ -58,7 +33,38 @@ class virtualFolder
 		//TODO:Handle new datachannel
 		this.datachannels.set(dc_id,datachannel);
 		this.remote_files.set(dc_id,{});
+		this.create_webworker(dc_id);
 		this.handle_open_datachannel(datachannel,dc_id);
+	}
+
+	//Creat web worker to handle datachunk request
+	create_webworker(dc_id)
+	{
+		const worker = new Worker('/JS/webrtc/read_chunk.js');
+		const datachannel = this.datachannels.get(dc_id);
+		worker.onmessage = (e) => 
+		{
+			const data = e.data;
+			const file_id = data.file_id, chunks_base64 = data.chunks_base64;
+			for(const [chunk_index,chunk_infos] of Object.entries(chunks_base64))
+			{
+				const [chunk_b64,chunk_size] = chunk_infos;
+				const data = 
+				{
+					file_id:file_id,	
+					chunk_index:parseInt(chunk_index),
+					chunk_size:chunk_size,
+					chunk_data:chunk_b64
+				};
+				const message = JSON.stringify({
+					code:'recive_datachunk',
+					data:data
+				});
+				datachannel.send(message);
+			}
+		}
+		worker.onerror = (e) =>{console.log('webworker erro')};
+		this.webworkers.set(dc_id,worker);
 	}
 
 	//Handles this.datachannels[id] open event
@@ -185,22 +191,17 @@ class virtualFolder
 		const file = this.local_files.get(infos.file_id);
 		const datachannel = this.datachannels.get(dc_id);
 		const start = infos.start , end = infos.start + infos.chunks;
-		const chunks_base64 = await get_file_chunks_base64(start,end,CHUNK_SIZE_BYTES,file);	
-		for(const [chunk_index,chunk_infos] of chunks_base64)
+		const worker = this.webworkers.get(dc_id);
+		const message = 
 		{
-			const [chunk_b64,chunk_size] = chunk_infos;
-			const data = {
-				file_id:infos.file_id,	
-				chunk_index:chunk_index,
-				chunk_size:chunk_size,
-				chunk_data:chunk_b64
-			};
-			const message = JSON.stringify({
-				code:'recive_datachunk',
-				data:data
-			});
-			datachannel.send(message);
+			start:start,
+			end:end,
+			chunk_size:CHUNK_SIZE_BYTES,
+			file:file,
+			file_id:infos.file_id
 		}
+		worker.postMessage(message);
+		//const start = msg.data.start , end = msg.data.end, chunk_size = msg.data.chunk_size, file = msg.data.file, file_id = msg.data.file_id;
 	}
 
 	recive_datachunk(infos,dc_id)
