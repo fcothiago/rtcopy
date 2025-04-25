@@ -1,4 +1,4 @@
-const buffer_limit = 1000;
+const buffer_limit = 100;
 
 function file_to_base64(file)
 {

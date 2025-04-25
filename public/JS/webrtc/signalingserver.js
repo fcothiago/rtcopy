@@ -73,8 +73,7 @@ class signalingClient
 		this.onIcecandidateError = (error) => {console.log(`onIcecandidateError ${error}`)};
 		this.onDataChannelOpen = (datachannel,id) => {console.log("onDataChannelCreation")};
 		this.onDataChannelMessage = (message,id) => {console.log("onDataChannelMessage")};
-		this.onDataChannelClose = (datachannel,peer_sock_id) => {console.log("onDataChannelClose")};
-		//this.init_signaling_client();
+		this.onDataChannelClose = (peer_sock_id) => {console.log("onDataChannelClose")};
 	}
 
 	setup_datachannel(datachannel,sock_id)
@@ -85,6 +84,9 @@ class signalingClient
 		datachannel.onmessage = (event) => {
 			this.onDataChannelMessage(event.data,sock_id);
 		};
+		datachannel.onclose = () =>{
+			this.onDataChannelClose(sock_id);
+		}
 	}
 
 	init_signaling_client()
@@ -94,14 +96,14 @@ class signalingClient
 			{
 				this.onJoinfolderError(result)
 			}
-			socket.emit("peer-request",{folder_name:this.folder_name});
+			this.socket.emit("peer-request",{folder_name:this.folder_name});
 		});
 
 		this.socket.on("peer-request", async (params) =>{
 			console.log(`Recived peer request from ${params.origin}`);	
 			const reciver = params.origin;
 			try{
-				const [peer,datachannel] = await handle_peer_request(socket,reciver,this.peers);
+				const [peer,datachannel] = await handle_peer_request(this.socket,reciver,this.peers);
 				this.setup_datachannel(datachannel,reciver);
 			}catch(error){
 				this.onPeerRequestError(error);
@@ -113,7 +115,7 @@ class signalingClient
 			const reciver = params.origin;
 			const offer = params.offer;
 			try{
-				const [peer,datachannel] = await handle_peer_offer(socket,offer,reciver,this.peers)
+				const [peer,datachannel] = await handle_peer_offer(this.socket,offer,reciver,this.peers)
 				this.setup_datachannel(datachannel,reciver);
 			}catch(error){
 				this.onRtcOfferError(error);
@@ -141,7 +143,7 @@ class signalingClient
 			}
 		});
 
-		socket.emit("join-folder",{folder_name:this.folder_name,folder_pass:this.folder_pass});
+		this.socket.emit("join-folder",{folder_name:this.folder_name,folder_pass:this.folder_pass});
 	}
 
 }

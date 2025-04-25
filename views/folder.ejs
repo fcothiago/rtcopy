@@ -7,6 +7,9 @@
 		<script src="/JS/webrtc/signalingserver.js"></script>
 		<script src="/JS/webrtc/virtualfolder.js"></script>
 		<script src="/JS/webrtc/downloadmanager.js"></script>
+		<script src="/JS/folder/remotefiles.js"></script>
+		<script src="/JS/folder/localfiles.js"></script>
+		<script src="/JS/folder/initclient.js"></script>
 		<title>Virtual Folder</title>
 	</head>
 	<body>
@@ -28,98 +31,7 @@
 			const params = <%- JSON.stringify(params) %>;
 			const folder_name = params.folder_name;
 			const folder_pass = params.folder_pass;
-			const socket = io("http://localhost:7777");
-			const client = new signalingClient(socket,folder_name,folder_pass);
-			const vfolder = new virtualFolder();	
-			const manager = new downloadManager(vfolder);
-
-			client.onDataChannelOpen = (datachannel,id) => {
-				vfolder.add_datachannel(datachannel,id);
-			};
-
-			client.onDataChannelMessage = (message,id) => {
-				vfolder.handle_datachannel_message(message,id);
-			};
-
-			vfolder.onDatachunkRecived = (infos,dc_id) => {
-				manager.recive_datachunk(infos,dc_id);
-			};
-
-			document.getElementById('fileinput').addEventListener('change', (event) => {
-				if(event.target.files)
-				{
-					vfolder.add_local_files(event.target.files);
-				}
-			});
-
-			// DOM Handling
-
-			vfolder.onNewRemoteFile = (file,dc_id) => {
-				const ul = document.getElementById('directory');
-				const li = document.createElement('li');
-				const a  = document.createElement('a');
-				const span = document.createElement('span');
-				span.innerHTML = `${file.name}`; 
-				a.href = '#';
-				a.innerHTML = 'request file';
-				a.onclick = async (event) =>
-				{
-					event.preventDefault();
-					a.onclick = () => {};
-					chunk_recived = (download) =>
-					{
-						if(download.finished)
-						{
-							const data = download.file_handler.file_data , mime_type = download.file_handler.mime_type;
-							const blob = new Blob(data,{type:mime_type});
-							const url = URL.createObjectURL(blob);
-							a.innerHTML = 'download';
-							a.href = url;
-						}
-						else
-						{
-							a.innerHTML = `${100*(download.bytes_recived/download.file_size)}%`
-						}
-					}
-					await manager.start_download(file.file_id,dc_id,(download) => {
-						chunk_recived(download);
-					});
-					a.innerHTML = "0%";
-				};
-				li.className = `remote-file-${dc_id}`;
-				li.id = `file-${file.file_id}`;
-				li.appendChild(span);
-				li.appendChild(a);
-				ul.appendChild(li);
-			};
-
-			vfolder.onNewLocalFile = (file) => {
-				const ul = document.getElementById('directory');
-				const li = document.createElement("li");
-				const a  = document.createElement("a");
-				const span = document.createElement("span");
-				span.innerHTML = `${file.name}`; 		
-				a.href = '#';
-				a.innerHTML = 'remove';
-				a.addEventListener('click',(event) => {
-					event.preventDefault();
-					vfolder.delete_local_files([file.file_id]);
-					li.remove();
-				})
-				li.appendChild(a);
-				li.appendChild(span);
-				li.appendChild(a);
-				ul.appendChild(li);	
-			};
-
-			vfolder.onRemoteFileRemoval = (file,dc_id) => {
-				const query = document.querySelectorAll(`.remote-file-${dc_id}#file-${file.file_id}`);
-				query.forEach( element => {element.remove()});
-			};
-
-			// Starting Connection with Signaling Client
-
-			client.init_signaling_client();
+			initclient(folder_name,folder_pass);	
 		</script>
 	</body>
 </html>

@@ -18,16 +18,16 @@ class virtualFolder
 		this.remote_files = new Map();
 		this.datachannels = new Map();
 		this.webworkers = new Map();
-		this.onNewLocalFile = (file) => {console.log(`new local file ${file.file_id}`)};
-		this.onNewRemoteFile = (file,dc_id) => {console.log(`new remote file ${file.file_id}`)};
-		this.onRemoteFileRemoval = (file,dc_id) => {console.log(`removing remote file ${file.file_id} from ${dc_id}`)};
-		this.onLocalFileRemoval = (file) => {console.log(`removing local file ${file.file_id}`)};
-		this.onDatachunkReceived = (infos,dc_id) => {console.log(`recive new datachunk dc ${dc_id} file_id ${infos.file_id} index ${infos.index}`);};
+		this.onNewLocalFile = (file) => console.log(`new local file ${file.file_id}`);
+		this.onNewRemoteFile = (file,dc_id) => console.log(`new remote file ${file.file_id}`);
+		this.onRemoteFileRemoval = (file,dc_id) => console.log(`removing remote file ${file.file_id} from ${dc_id}`);
+		this.onLocalFileRemoval = (file) => console.log(`removing local file ${file.file_id}`);
+		this.onDatachunkReceived = (infos,dc_id) => console.log(`recive new datachunk dc ${dc_id} id ${infos.file_id} index ${infos.index}`);
 	}
 
-	/*Adding and and Config a new Peer's datachannel*/
+	/*Adding and Config a new Peer's datachannel*/
 	
-	//Adds a new data channel]
+	//Adds a new data channel
 	add_datachannel(datachannel,dc_id)
 	{
 		//TODO:Handle new datachannel
@@ -35,6 +35,18 @@ class virtualFolder
 		this.remote_files.set(dc_id,{});
 		this.create_webworker(dc_id);
 		this.handle_open_datachannel(datachannel,dc_id);
+	}
+
+	//Remove a data channel
+	remove_datachannel(dc_id)
+	{
+		const remote_files = this.remote_files.get(dc_id);
+		if(!remote_files || !this.datachannels.has(dc_id))
+			return;
+		const file_ids = [...Object.entries(remote_files).map( (e) => e[0] )];
+		this.delete_remote_files(file_ids,dc_id)
+		this.remote_files.delete(dc_id);
+		this.datachannels.delete(dc_id);
 	}
 
 	//Creat web worker to handle datachunk request
@@ -165,7 +177,7 @@ class virtualFolder
 		for(const index in file_ids)
 		{
 			const file_id = file_ids[index];
-			const file = structuredClone(this.remote_files.get(dc_id)[file_id]);
+			const file = this.remote_files.get(dc_id)[file_id];
 			this.onRemoteFileRemoval(file,dc_id);
 			delete this.remote_files.get(dc_id)[file_id];
 		}
@@ -190,6 +202,8 @@ class virtualFolder
 	{
 		const file = this.local_files.get(infos.file_id);
 		const datachannel = this.datachannels.get(dc_id);
+		if(!file || !datachannel)
+			return;
 		const start = infos.start , end = infos.start + infos.chunks;
 		const worker = this.webworkers.get(dc_id);
 		const message = 

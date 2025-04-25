@@ -1,4 +1,4 @@
-const CHUNK_COUNT = 10000;
+const CHUNK_COUNT = 1000;
 
 function gen_download_key(file_id,dc_id)
 {
@@ -99,6 +99,7 @@ class downloadManager
 			const download = this.current_downloads.get(key);
 			if(download.finished)
 			{
+				this.current_downloads.get(key).file_handler.finish();
 				this.current_downloads.delete(key);
 			}
 			download.download_update_callback(download);
@@ -127,6 +128,16 @@ class downloadManager
 			download_update_callback : onDownloadUpdate
 		});
 		this.folder.request_datachunks(0,CHUNK_COUNT,file_id,dc_id);
+	}
+
+	delete_download(file_id,dc_id)
+	{
+		const key = gen_download_key(file_id,dc_id); 
+		const download = this.current_downloads.get(key);
+		if(!download)
+			return;
+		download.file_handler.finish();
+		this.current_downloads.delete(key);
 	}
 
 	recive_datachunk(infos,dc_id)

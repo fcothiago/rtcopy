@@ -15,12 +15,18 @@ function base64_to_uint8array(chunks_b64_array)
 	return full_chunk;  
 }
 
+function get_sorted_map(map)
+{
+	const entries = [...map.entries()];
+	return entries.sort((a,b) => a[0] - b[0]);
+}
+
 self.onmessage = (e) => {
 	const [chunks_b64,blob_file,mime_type] = e.data;
 	if(!chunks_b64)
 		return;
-	const chunks_b64_array = [];
-	for(const [key,value] of chunks_b64)
+	const chunks_b64_sorted = get_sorted_map(chunks_b64) , chunks_b64_array = [];
+	for(const [key,value] of chunks_b64_sorted)
 	{
 		chunks_b64_array.push(value);
 	}

@@ -1,0 +1,56 @@
+function add_remotefile_infos(remote_file_item,file,dc_id)
+{
+	const file_name = document.createElement('span');
+	file_name.innerHTML = `${file.name}`;
+	file_name.classname = `remote-file ${dc_id}`;
+	remote_file_item.appendChild(file_name);
+}
+
+function handle_chunks_update(request_btn,file,dc_id,download_manager)
+{
+	return (download) => 
+	{
+		if(!download.finished)
+		{
+			request_btn.innerHTML = `${parseInt(100*(download.bytes_recived/download.file_size))}%`;
+			return;
+		}
+		const data = download.file_handler.file_data , mime_type = download.file_handler.mime_type;
+		const blob = new Blob(data,{type:mime_type});
+		const url = URL.createObjectURL(blob);
+		request_btn.innerHTML = 'download';
+		request_btn.href = url;
+	};
+}
+
+function handle_request_btn_click(request_btn,file,dc_id,download_manager)
+{
+	return async (e) =>
+	{
+		e.preventDefault();
+		request_btn.onclick = () => {};
+		const chunk_update_callback = handle_chunks_update(request_btn,file,dc_id,download_manager);
+		await download_manager.start_download(file.file_id,dc_id,chunk_update_callback);
+		request_btn.innerHTML = "0%";
+	};
+}
+
+function add_remotefile_request_btn(remote_file_item,file,dc_id,download_manager)
+{
+	const request_btn = document.createElement('a');
+	request_btn.href = '#';
+	request_btn.innerHTML = 'request';
+	request_btn.onclick = handle_request_btn_click(request_btn,file,dc_id,download_manager);
+	remote_file_item.appendChild(request_btn);
+}
+
+function add_remotefile(file,dc_id,folder,download_manager)
+{
+	const directory = document.getElementById('directory');
+	const remote_file_item = document.createElement('li');
+	add_remotefile_infos(remote_file_item,file,dc_id);
+	add_remotefile_request_btn(remote_file_item,file,dc_id,download_manager);
+	remote_file_item.className = `remote-file-${dc_id}`;
+	remote_file_item.id = `remote-${file.file_id}`;
+	directory.appendChild(remote_file_item);
+}
