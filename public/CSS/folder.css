@@ -1,9 +1,59 @@
-main {
-	display:grid;
-	grid-template-columns: 30% 70%;
+body,html,main{
+	width: 100%;
+	height: 100%;
+	margin: 0;
 }
 
-main section.preview-area
-{
+input#fileinput{
 	display:none;
+}
+
+body{
+	
+}
+
+header{
+	/*background-color:#364958;*/
+}
+
+main{
+	display:grid;
+	grid-template-columns: 5% 95%;
+	background-color: #364958;	
+}
+
+main section{
+	height:100%;
+}
+
+
+section#user-area{
+	/*background-color:#55828B;*/
+}
+
+section#files-area{
+	height:100%;
+	display:flex;
+	justify-content:center;
+}
+
+
+section#files-area div#scrollable-area{
+	height:100%;
+	width:100%;
+	background: #98d9be;
+	background: linear-gradient(180deg, rgba(152, 217, 190, 1) 40%, rgba(135, 187, 162, 1) 100%);
+}
+
+section#preview-area{
+	display:none;
+}
+
+ul#directory{
+	list-style-type:none;
+}
+
+ul#directory li{
+	display:grid;
+	grid-template-columns: 80% 20%;
 }
