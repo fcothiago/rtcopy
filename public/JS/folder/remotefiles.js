@@ -24,7 +24,7 @@ function handle_chunks_update(request_btn,file,dc_id,download_manager)
 		const data = download.file_handler.file_data , mime_type = download.file_handler.mime_type;
 		const blob = new Blob(data,{type:mime_type});
 		const url = URL.createObjectURL(blob);
-		request_btn.innerHTML = 'download';
+		request_btn.innerHTML = "<img src='/icons/play-button-svgrepo-com.svg' class='download-button' alt='play/download '>";
 		request_btn.href = url;
 	};
 }
@@ -47,6 +47,7 @@ function add_remotefile_request_btn(remote_file_item,file,dc_id,download_manager
 	request_btn.href = '#';
 	request_btn.innerHTML = 'request';
 	request_btn.onclick = handle_request_btn_click(request_btn,file,dc_id,download_manager);
+	request_btn.innerHTML = "<img src='/icons/download-minimalistic-svgrepo-com.svg' class='download-button' alt='request file'>";
 	remote_file_item.appendChild(request_btn);
 }
 
