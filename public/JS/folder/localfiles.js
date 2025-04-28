@@ -14,9 +14,15 @@ function add_remove_btn(localfile_item,folder)
 
 function add_localfile_infos(localfile_item,file)
 {
+	const file_infos = document.createElement('div');
+	const icon = document.createElement('img');
 	const file_name = document.createElement('span');
+	icon.src = '/icons/file-file-type-svgrepo-com.svg';
+	icon.alt = 'local file';
 	file_name.innerHTML = `${file.name}`;
-	localfile_item.appendChild(file_name);
+	file_infos.appendChild(icon);
+	file_infos.appendChild(file_name);
+	localfile_item.appendChild(file_infos);
 }
 
 function add_localfile(file,dc_id,folder)

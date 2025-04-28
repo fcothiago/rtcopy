@@ -1,9 +1,15 @@
 function add_remotefile_infos(remote_file_item,file,dc_id)
 {
+	const file_infos = document.createElement('div');
+	const icon = document.createElement('img');
 	const file_name = document.createElement('span');
 	file_name.innerHTML = `${file.name}`;
-	file_name.classname = `remote-file ${dc_id}`;
-	remote_file_item.appendChild(file_name);
+	icon.src = '/icons/cloud-svgrepo-com.svg';
+	icon.alt = 'remote file';
+	file_infos.classname = `remote-file ${dc_id}`;
+	file_infos.appendChild(icon);
+	file_infos.appendChild(file_name);
+	remote_file_item.appendChild(file_infos);
 }
 
 function handle_chunks_update(request_btn,file,dc_id,download_manager)
