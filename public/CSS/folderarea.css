@@ -1,0 +1,45 @@
+section#folder-area{
+	display:flex;
+	width:100%;
+	height:100%;
+	justify-content:center;
+}
+
+section#folder-area div#scrollable-area{
+	height:100%;
+	width:100%;
+	margin:0;
+	background:#ffffff;
+	background:linear-gradient(140deg, rgba(255, 255, 255, 1) 30%, rgba(255, 255, 255, 1) 80%, rgba(216, 217, 227, 1) 100%);
+}
+
+ul#directory{
+	list-style-type:none;
+	margin:0;
+	padding:0;
+}
+
+ul#directory li{
+	height:2em;
+	display:grid;
+	grid-template-columns: 80% 20%;
+	border-bottom: 1px solid black;
+}
+
+ul#directory li *{
+	margin-top:auto;
+	margin-bottom:auto;
+}
+
+ul#directory li span.buttons-group a img{
+	margin-left:auto;
+	margin-right:auto;
+}
+
+ul#directory li span.buttons-group a{
+	margin-left:1em;
+}
+
+ul#directory li img{
+	height: 1em;
+}

@@ -1,0 +1,27 @@
+aside#user-area{
+	width:100%;
+	background-color: red;
+	display:flex;
+	flex-direction:row;
+}
+
+aside#user-area div{
+	height:100%;
+	display:inline;
+}
+
+aside#user-area div img{
+	height:100%;
+}
+
+aside#user-area div span{
+	height:100%;
+}
+
+input#fileinput{
+	display:none;
+}
+
+label{
+	/*margin-bottom:10em;*/
+}

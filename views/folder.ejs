@@ -3,6 +3,9 @@
 	<head>
 		<meta charset="UTF-8"/>
 		<link rel="stylesheet" href="/CSS/folder.css"/>
+		<link rel="stylesheet" href="/CSS/userarea.css"/>
+		<link rel="stylesheet" href="/CSS/folderarea.css"/>
+		<link rel="stylesheet" href="/CSS/previewarea.css"/>
 		<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
 		<script src="/JS/webrtc/signalingserver.js"></script>
 		<script src="/JS/webrtc/virtualfolder.js"></script>
@@ -10,39 +13,66 @@
 		<script src="/JS/folder/remotefiles.js"></script>
 		<script src="/JS/folder/localfiles.js"></script>
 		<script src="/JS/folder/initclient.js"></script>
+		<script src="/JS/folder/preview.js"></script>
 		<title>Virtual Folder</title>
 	</head>
 	<body>
 		<header>
 			logo
 		</header>
-		<main>
-			<section id="user-area">
-				<input type="file" id="fileinput" multiple/>	
-				<label for="fileinput" class="fileinput-label">
-					<img src="/icons/upload-svgrepo-com.svg" alt="add local file">
-				</label>
-				<div id="connections" class="infos">
-					<div>
-						<img src="/icons/wireless-svgrepo-com.svg" alt="0 peers connected"> 
-						<span id="peers-count">0</span>
-					</div>
-				</div>
-				<div id="files" class="infos">
-					<div>
-						<img src="/icons/folder-open-svgrepo-com.svg" alt="0 files in folder"> 
-						<span id="files-count">0</span>
-					</div>
-				</div>
-			</section>
+		<main>	
 			<section id="folder-area">
 				<div id="scrollable-area">
 					<ul id="directory"></ul>
 				</div>
 			</section>
-			<section id="preview-area">
-			</section>
 		</main>
+		<aside id="user-area">
+			<div id="infos-area">
+				<span id="connections" class="infos">
+					<!--<img src="/icons/wireless-svgrepo-com.svg" alt="0 peers connected">-->
+					<span id="peers-count">0</span>
+				</span>
+				<span id="files" class="infos">
+					<!--<img src="/icons/folder-open-svgrepo-com.svg" alt="0 files in folder">-->
+					<span id="files-count">0</span>
+				</span>
+			</div>
+			<div id="input-area">
+				<input type="file" id="fileinput" multiple/>	
+				<label for="fileinput" class="fileinput-label">
+					<!--<img src="/icons/upload-svgrepo-com.svg" alt="add local file">-->
+				</label>
+			</div>
+		</aside>
+		<aside id="preview-area">
+			<div id="close-button-container">
+				<a href="#" id="preview-close-button" onclick='close_preview()'><img src="/icons/cross-svgrepo-com.svg"></a>
+			</div>
+			<div id="thumb-image-container">
+				<img src="/icons/image-combiner-svgrepo-com.svg"> 
+			</div>
+			<div id="file-infos-container">
+				<table>
+					<tr>
+						<td><strong>name</strong></td>
+						<td id="preview-filename">name</td>
+					</tr>
+					<tr>
+						<td><strong>size</strong></td>
+						<td id="preview-filesize">0 kb</td>
+					</tr>
+					<tr>
+						<td><strong>type</strong></td>
+						<td id="preview-filetype">data</td>
+					</tr>
+					<tr>
+						<td><strong>ower</strong></td>
+						<td id="preview-fileowner">local</td>
+					</tr>
+				</table>
+			</div>
+		</aside>
 		<script>
 			const params = <%- JSON.stringify(params) %>;
 			const folder_name = params.folder_name;

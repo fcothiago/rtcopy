@@ -31,9 +31,16 @@ function add_localfile(file,folder)
 {
 	const directory = document.getElementById('directory');
 	const localfile_item = document.createElement('li');
+	const buttons_group = document.createElement('span');
 	add_localfile_infos(localfile_item,file);
-	add_remove_btn(localfile_item,file,folder);
+	add_preview_btn(buttons_group,{
+		...file,
+		owner:'you'
+	});
+	add_remove_btn(buttons_group,file,folder);
 	localfile_item.className = `local-file`;
 	localfile_item.id = `local-${file.file_id}`;
+	buttons_group.className = 'buttons-group';
+	localfile_item.appendChild(buttons_group);
 	directory.appendChild(localfile_item);
 }

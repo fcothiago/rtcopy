@@ -55,9 +55,16 @@ function add_remotefile(file,dc_id,folder,download_manager)
 {
 	const directory = document.getElementById('directory');
 	const remote_file_item = document.createElement('li');
+	const buttons_group = document.createElement('span');
 	add_remotefile_infos(remote_file_item,file,dc_id);
-	add_remotefile_request_btn(remote_file_item,file,dc_id,download_manager);
+	add_preview_btn(buttons_group,{
+		...file,
+		owner:dc_id
+	});
+	add_remotefile_request_btn(buttons_group,file,dc_id,download_manager);
 	remote_file_item.className = `remote-file-${dc_id}`;
 	remote_file_item.id = `remote-${file.file_id}`;
+	buttons_group.className = 'buttons-group';
+	remote_file_item.appendChild(buttons_group);
 	directory.appendChild(remote_file_item);
 }

@@ -10,100 +10,10 @@ header{
 
 body{
 	display:grid;
-	grid-template-rows:5% 95%;
-	background-color:#23395B;	
-}
-
-section#preview-area{
-	display:none;
-}
-
-input#fileinput{
-	display:none;
-}
-
-label{
-	margin-bottom:10em;
+	grid-template-rows:5% 90% 5%;
+	background-color:#23395B;
 }
 
 main{
-	width:100%;
-	display:grid;
-	grid-template-columns:5% 95%;
+	width:100%;	
 }
-
-section#user-area{
-	display:flex;
-	flex-direction:column;
-	justify-content:center;
-}
-
-section#user-area > *{
-	margin-right:auto;
-	margin-left:auto;
-	width:50%;
-}
-
-section#user-area img
-{
-	width:100%;
-}
-
-section#user-area div.infos div
-{
-	display:grid;
-	grid-template-columns: 50% 50%;
-}
-
-section#user-area div.infos div img
-{
-	width:100%;
-	margin:auto;
-}
-
-section#user-area div.infos div span{
-	color:white;
-	font-size:1em;
-	margin:auto;
-}
-
-section#folder-area{
-	display:flex;
-	justify-content:center;
-} 
-
-section#folder-area div#scrollable-area{
-	height:100%;
-	width:100%;
-	margin:0;
-	background:#ffffff;
-	background:linear-gradient(140deg, rgba(255, 255, 255, 1) 30%, rgba(255, 255, 255, 1) 80%, rgba(216, 217, 227, 1) 100%);
-}
-
-ul#directory{
-	list-style-type:none;
-	margin:0;
-	padding:0;
-}
-
-ul#directory li{
-	height:2em;
-	display:grid;
-	grid-template-columns: 80% 20%;
-	border-bottom: 1px solid black;
-}
-
-ul#directory li:nth-child(odd){
-	/*background-color:#d9dce3;*/
-}
-
-ul#directory li *{
-	margin-top:auto;
-	margin-bottom:auto;
-}
-
-ul#directory li img{
-	height: 1em;
-
-}
-
