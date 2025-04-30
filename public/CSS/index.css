@@ -1,0 +1,15 @@
+body,html{
+	height:100%;
+	width:100%;
+	margin:0;
+	background: #8797AF;
+	background: radial-gradient(circle, rgba(135, 151, 175, 1) 0%, rgba(86, 102, 122, 1) 100%);
+	display:flex;
+	justify-content:center;
+}
+
+main{
+	position:absolute;
+	display:inline-block;
+	margin-left:10em;
+}

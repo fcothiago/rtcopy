@@ -10,10 +10,11 @@ header{
 
 body{
 	display:grid;
-	grid-template-rows:5% 90% 5%;
+	grid-template-rows:5% 95%;
 	background-color:#23395B;
 }
 
 main{
-	width:100%;	
+	width:100%;
+	position:relative;
 }
