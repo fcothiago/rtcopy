@@ -8,14 +8,15 @@ aside#user-area{
 }
 
 aside#user-area div{
-	background-color:#5F4B66;
+	background-color:#2C1320;
 }
-
 
 aside#user-area div#input-area{
 	height:100%;
-	border-top-right-radius:10px;
-	border-bottom-right-radius:10px;
+	/*border-top-right-radius:10px;
+	border-bottom-right-radius:10px;*/
+	border-radius:3em;
+	margin-left:1em;
 }
 
 

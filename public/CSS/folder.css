@@ -12,6 +12,7 @@ body{
 	display:grid;
 	grid-template-rows:5% 95%;
 	background-color:#23395B;
+
 }
 
 main{

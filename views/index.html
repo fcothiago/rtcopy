@@ -4,15 +4,38 @@
 		<meta charset="UTF-8" />
 		<link rel="stylesheet" href="/CSS/index.css"/>
 		<title> RTCopy </title>
+		<script>
+			const descriptions = {
+				0:"RTCopy is a simple tool that allows users to share files directly from their browsers in a P2P fashion. You can create a virtual folder and share your local files or download remote files from others. Once you finished, just close de tab and all your files will be removed from the folder",
+				1:"Access rtcopy.com/foldername/pass to join a folder create a new one if none is associated with that name. If no password is given, one will be generated for you.",
+				2:"Rtcopy is an experimental project, avoid sending critical or highly sensitive files (eg. A file with your passes)"
+			};
+			const titles = {
+				0:"RTCopy",
+				1:"How to use it",
+				2:"About"
+			}
+			update_text = (e) =>{
+				document.getElementById("title").innerHTML = titles[e];	
+				document.getElementById("description").innerHTML = descriptions[e];
+			};
+		</script>
 	</head>
 	<body>
 		<main>
-			<h1>RTCopy</h1>
-			<p>RTCopy is a simple tool that allows users to share files directly from their browsers in a <strong>P2P</strong> fashion.</p>
-			<p>Once all users leave a specific room, the room is closed, and all data associated with it is deleted. No files are stored on the server.</p>
-		</main>		
-		<!--<h1>How to use it</h1>
-		<p>Access rtcopy.com/'room_name' to enter a room or create a new one if no room is associated with that name. If you want to use a password, access rtcopy.com/'room_name'/'password'.	</p>
-		<p>If you need a room where only the first user to access it is able to share files that will be downloaded by other users, use rtcopy.com/u/'room_name' or rtcopy.com/u/'room_name'/'password'.</p>-->
+			<div>
+				<h1 id="title">RTCopy</h1>
+				<p id="description">RTCopy is a simple tool that allows users to share files directly from their browsers in a P2P fashion. You can create a virtual folder and share your local files or download remote files from others. Once you finished, just close de tab and all your files will be removed from the folder</p>	
+				<nav>
+					<a href="#" onclick="update_text(0);">RTCopy</a>
+					<a href="#" onclick="update_text(1);">how to use it?</a>
+					<a href="#" onclick="update_text(2);">about</a>
+				</nav>
+			</div>
+			<div id="join-folder">
+				<input placeholder="Type a folder name and click in the button to join">
+				<button id="join-folder-btn">join</button>
+			</div>
+		</main>			
 	<body>
 </html>

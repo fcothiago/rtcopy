@@ -44,6 +44,11 @@ function initclient(folder_name,folder_pass)
 		query.forEach( element => {element.remove()});
 		files_counter.innerHTML = `${vfolder.total_files}`;	
 	};
+	vfolder.onLocalFileRemoval = (file_id) => 
+	{
+		document.getElementById(`local-${file_id}`).remove();
+		files_counter.innerHTML = `${vfolder.total_files}`;	
+	};
 
 	client.init_signaling_client();
 }
