@@ -42,7 +42,7 @@ exports.enterRoom = (req,res) => {
 	const params = {
 		folder_name:folder_name,
 		folder_pass:folder_pass,
-		page_url:page_url,
+		server_url:page_url,
 		port:port
 	};
 	res.render("folder", {params});

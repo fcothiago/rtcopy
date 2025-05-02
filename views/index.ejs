@@ -22,7 +22,7 @@
 				document.getElementById("description").innerHTML = descriptions[e];
 			};
 			join_folder = () =>{
-				const page_url = `${params.page_url}${params.port ? ':' + params.port : ''}`;
+				const page_url = `${params.server_url}${params.port ? ':' + params.port : ''}`;
 				const name = document.getElementById('foldername').value;
 				const pass = document.getElementById('folderpass').value;
 				if(name)
