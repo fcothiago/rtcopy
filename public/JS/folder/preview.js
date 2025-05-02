@@ -21,7 +21,7 @@ function show_preview(infos)
 	filetype.innerHTML = `${infos.type}`;
 	fileowner.innerHTML = `${infos.owner}`;
 	const preview = document.getElementById('preview-area');
-	preview.style.display = '';
+	preview.style.display = 'grid';
 
 }
 

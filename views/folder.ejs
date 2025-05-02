@@ -77,7 +77,8 @@
 			const params = <%- JSON.stringify(params) %>;
 			const folder_name = params.folder_name;
 			const folder_pass = params.folder_pass;
-			initclient(folder_name,folder_pass);	
+			const page_url = `${params.server_url}${params.port ? ':' + params.port : ''}`;
+			initclient(folder_name,folder_pass,page_url);	
 		</script>
 	</body>
 </html>

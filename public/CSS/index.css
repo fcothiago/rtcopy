@@ -45,16 +45,15 @@ main nav{
 main div#join-folder{
 	width:100%;
 	display:grid;
-	grid-template-columns:85% 15%;
-}
-
-main div#join-folder{
+	grid-template-columns:60% 30% 10%;
 	margin:auto;
 }
 
 main div#join-folder *{
-	margin-top:1.5em;
-	font-size:1.2em;
+	margin-top:1em;
+	margin-left:0.2em;
+	margin-right:0.2em;
+	font-size:1em;
 }
 
 main h1{

@@ -1,6 +1,6 @@
-function initclient(folder_name,folder_pass)
+function initclient(folder_name,folder_pass,server_url)
 {
-	const socket = io("http://localhost:7777");
+	const socket = io(server_url);
 	const client = new signalingClient(socket,folder_name,folder_pass);
 	const vfolder = new virtualFolder();
 	const manager = new downloadManager(vfolder);
