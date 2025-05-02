@@ -16,7 +16,7 @@ function generate_pass(digits)
 
 exports.getLandingPage = (req,res) => {
 	const page_url = process.env.SERVER_URL ? process.env.SERVER_URL : 'http://localhost';
-	const port = process.env.PORT; 
+	const port = process.env.SERVER_PORT; 
 	const params = {
 		server_url:page_url,
 		port:port
@@ -28,7 +28,7 @@ exports.enterRoom = (req,res) => {
 	const folder_name = req.params.name;
 	const folder_pass = req.params.pass;
 	const page_url = process.env.SERVER_URL ? process.env.SERVER_URL  : 'http://localhost';
-	const port = process.env.PORT; 
+	const port = process.env.SERVER_PORT; 
 	if(!folder_pass)
 	{
 		const pass = generate_pass(8);
