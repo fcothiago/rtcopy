@@ -24,8 +24,11 @@ function handle_chunks_update(request_btn,file,dc_id,download_manager)
 		const data = download.file_handler.file_data , mime_type = download.file_handler.mime_type;
 		const blob = new Blob(data,{type:mime_type});
 		const url = URL.createObjectURL(blob);
-		request_btn.innerHTML = "<img src='/icons/play-button-svgrepo-com.svg' class='download-button' alt='play/download '>";
+		request_btn.innerHTML = "<img src='/icons/play-button-svgrepo-com.svg' class='download-button' alt='play/download'>";
 		request_btn.href = url;
+		const file_item = document.getElementById(`remote-file-${dc_id}-${file.file_id}`);
+		file_item.className = 'finished-download';
+		file_item.id = `download-${dc_id}-${file.file_id}`;
 	};
 }
 
@@ -63,7 +66,7 @@ function add_remotefile(file,dc_id,folder,download_manager)
 	});
 	add_remotefile_request_btn(buttons_group,file,dc_id,download_manager);
 	remote_file_item.className = `remote-file-${dc_id}`;
-	remote_file_item.id = `remote-${file.file_id}`;
+	remote_file_item.id = `remote-file-${dc_id}-${file.file_id}`;
 	buttons_group.className = 'buttons-group';
 	remote_file_item.appendChild(buttons_group);
 	directory.appendChild(remote_file_item);

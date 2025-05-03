@@ -13,9 +13,11 @@ function initclient(folder_name,folder_pass,server_url)
 		peers_counter.innerHTML = `${vfolder.datachannels.size}`;
 	}
 	client.onDataChannelMessage = (message,id) => vfolder.handle_datachannel_message(message,id);
-	client.onDataChannelClose = (id) =>
+	client.onDataChannelClose = (dc_id) =>
 	{	
-		vfolder.remove_datachannel(id);
+		vfolder.remove_datachannel(dc_id);
+		const query = document.querySelectorAll(`.remote-file-${dc_id}`);
+		query.forEach( element => {element.remove()});
 		peers_counter.innerHTML = `${vfolder.datachannels.size}`;
 	}
 	
