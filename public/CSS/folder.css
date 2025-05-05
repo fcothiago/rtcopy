@@ -19,3 +19,9 @@ main{
 	width:100%;
 	position:relative;
 }
+
+@media(max-width:600px){	
+	body,html{ 
+		grid-template-rows:10% 90%;
+	}									
+}

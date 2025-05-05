@@ -22,6 +22,7 @@ ul#directory{
 ul#directory li{
 	height:2em;
 	display:grid;
+	overflow:hidden;
 	grid-template-columns: 80% 20%;
 	border-bottom: 1px solid black;
 }
@@ -42,4 +43,10 @@ ul#directory li span.buttons-group a{
 
 ul#directory li img{
 	height: 1em;
+}
+
+@media(max-width:600px){
+	ul#directory li{
+		grid-template-columns: 70% 30%;
+	}
 }
