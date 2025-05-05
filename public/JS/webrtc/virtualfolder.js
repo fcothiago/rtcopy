@@ -16,6 +16,7 @@ class virtualFolder
 	{
 		this.local_files = new Map();
 		this.remote_files = new Map();
+		this.total_files = 0;
 		this.datachannels = new Map();
 		this.webworkers = new Map();
 		this.onNewLocalFile = (file) => console.log(`new local file ${file.file_id}`);
@@ -123,6 +124,7 @@ class virtualFolder
 			const file = files[i] , file_id = crypto.randomUUID();
 			this.local_files.set(file_id,file);
 			files_infos[file_id] = stract_file_infos(file,file_id);
+			this.total_files += 1;
 			this.onNewLocalFile(files_infos[file_id]);
 		}
 		const message = { 
@@ -139,6 +141,7 @@ class virtualFolder
 		{
 			const id = file_ids[index];
 			this.local_files.delete(id);
+			this.total_files -= 1;
 		}
 		const message = {
 			code:'del_remote_files',
@@ -168,6 +171,7 @@ class virtualFolder
 		for(const [file_id,file] of Object.entries(files))
 		{
 			this.remote_files.get(dc_id)[file_id] = file;
+			this.total_files += 1;
 			this.onNewRemoteFile(file,dc_id);
 		}
 	}
@@ -178,9 +182,11 @@ class virtualFolder
 		{
 			const file_id = file_ids[index];
 			const file = this.remote_files.get(dc_id)[file_id];
-			this.onRemoteFileRemoval(file,dc_id);
 			delete this.remote_files.get(dc_id)[file_id];
+			this.total_files -= 1;
+			this.onRemoteFileRemoval(file,dc_id);
 		}
+		
 	}
 	/*Sending/reciving Datachunks*/
 	request_datachunks(start,chunks,file_id,dc_id)
