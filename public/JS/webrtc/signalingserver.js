@@ -143,7 +143,8 @@ class signalingClient
 			}
 		});
 
-		this.socket.emit("join-folder",{folder_name:this.folder_name,folder_pass:this.folder_pass});
+		this.socket.on('connect', () => {
+			this.socket.emit("join-folder",{folder_name:this.folder_name,folder_pass:this.folder_pass});
+		})
 	}
-
 }
