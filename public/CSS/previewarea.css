@@ -3,7 +3,9 @@
 aside#preview-area{
 	display:none;
 	position:absolute;
+	float:right;
 	height:100%;
+	width:80%;
 	right:0;
 	grid-template-rows:5% 25% 70%;
 	background-color:white;
@@ -29,4 +31,10 @@ aside#preview-area div#thumb-image-container img{
 aside#preview-area div#file-infos-container table{
 	width:100%;
 	margin:auto;
+}
+
+@media(max-width:600px){
+	aside#preview-area{
+		width:100%;
+	}
 }

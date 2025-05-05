@@ -54,3 +54,14 @@ input#fileinput{
 label{
 	/*margin-bottom:10em;*/
 }
+
+@media(max-width:600px){
+	aside#preview-area{
+		width:100%;
+		font-size: 0.5em;
+	}
+	
+	aside#user-area{
+		bottom:2em;
+	}
+}

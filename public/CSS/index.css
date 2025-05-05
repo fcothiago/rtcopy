@@ -23,9 +23,10 @@ body {
 
 main{
 	margin:auto;
-	display:grid;
 	width:80%;
-	grid-template-rows:80% 20%
+	display:flex;
+	flex-direction:column;
+	justify-content:space-between;
 }
 
 main a{
@@ -70,5 +71,20 @@ main h1{
   	100% {
     		background-position: 0% 50%;
   	}
+}
+
+@media(max-width:600px){
+	body,html{
+		font-size:1.1em;
+	}
+
+	main div#join-folder{
+		font-size:0.8em;
+	}
+
+	main div#join-folder{
+		grid-template-columns: 40% 40% 20%;
+		margin-top:2em;
+	}	
 }
 
