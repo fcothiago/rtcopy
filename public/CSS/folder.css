@@ -11,8 +11,8 @@ header{
 body{
 	display:grid;
 	grid-template-rows:5% 95%;
-	background-color:#23395B;
-
+	background:#ffffff;
+	background:linear-gradient(140deg, rgba(255, 255, 255, 1) 30%, rgba(255, 255, 255, 1) 80%, rgba(216, 217, 227, 1) 100%);
 }
 
 main{

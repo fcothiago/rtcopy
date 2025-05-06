@@ -19,7 +19,6 @@ class virtualFolder
 		this.total_files = 0;
 		this.datachannels = new Map();
 		this.webworkers = new Map();
-		this.total_files = 0;
 		this.onNewLocalFile = (file) => console.log(`new local file ${file.file_id}`);
 		this.onNewRemoteFile = (file,dc_id) => console.log(`new remote file ${file.file_id}`);
 		this.onRemoteFileRemoval = (file,dc_id) => console.log(`removing remote file ${file.file_id} from ${dc_id}`);
@@ -132,7 +131,7 @@ class virtualFolder
 			code:'set_remote_files_infos',
 			data:files_infos 
 		};
-		this.broadcast_data(message);	
+		this.broadcast_data(message);
 	}
 
 	//Remove one or more local files with id in the list fil_ids and notify all peers about removal.
@@ -141,16 +140,15 @@ class virtualFolder
 		for(const index in file_ids)
 		{
 			const id = file_ids[index];
-			this.total_files -= 1; 
-			this.onLocalFileRemoval(id);
 			this.local_files.delete(id);
+			this.onLocalFileRemoval(id);
 			this.total_files -= 1;
 		}
 		const message = {
 			code:'del_remote_files',
 			data:file_ids
 		};
-		this.broadcast_data(message);	
+		this.broadcast_data(message);
 	}
 
 	//Sends all local files infos to a peer

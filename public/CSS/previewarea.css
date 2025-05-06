@@ -14,11 +14,6 @@ aside#preview-area{
 	font-size: 0.8em;
 }
 
-aside#preview-area div#close-button-container{
-	display:flex;
-	flex-direction:row-reverse;
-}
-
 aside#preview-area div#close-button-container img{
 	height:100%;
 }
