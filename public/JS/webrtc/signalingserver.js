@@ -22,8 +22,6 @@ const RTCPeerConn_configs = {
   ]
 };
 
-const peerConnection = new RTCPeerConnection(configuration);
-
 //TODO:Check variables naming. Maybe it's better to padronize termos like reciver and sender
 async function setup_offer(peer)
 {
