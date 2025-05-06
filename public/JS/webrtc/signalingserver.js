@@ -1,3 +1,29 @@
+const RTCPeerConn_configs = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun3.l.google.com:19302' },
+    { urls: 'stun:stun4.l.google.com:19302' },
+    { urls: 'stun:stun01.sipphone.com' },
+    { urls: 'stun:stun.ekiga.net' },
+    { urls: 'stun:stun.fwdnet.net' },
+    { urls: 'stun:stun.ideasip.com' },
+    { urls: 'stun:stun.iptel.org' },
+    { urls: 'stun:stun.rixtelecom.se' },
+    { urls: 'stun:stun.schlund.de' },
+    { urls: 'stun:stunserver.org' },
+    { urls: 'stun:stun.softjoys.com' },
+    { urls: 'stun:stun.voiparound.com' },
+    { urls: 'stun:stun.voipbuster.com' },
+    { urls: 'stun:stun.voipstunt.com' },
+    { urls: 'stun:stun.voxgratia.org' },
+    { urls: 'stun:stun.xten.com' }
+  ]
+};
+
+const peerConnection = new RTCPeerConnection(configuration);
+
 //TODO:Check variables naming. Maybe it's better to padronize termos like reciver and sender
 async function setup_offer(peer)
 {
@@ -15,13 +41,12 @@ async function setup_answer(peer,offer)
 
 async function create_peer(socket,reciver)
 {
-	const peer = new RTCPeerConnection();
+	const peer = new RTCPeerConnection(RTCPeerConn_configs);
 	peer.onicecandidate = (event) => {
 		if(event.candidate)
 			socket.emit("rtc-icecandidate",{reciver:reciver,icecandidate:event.candidate});
 	};
 	const datachannel =  await peer.createDataChannel("datachannel", { negotiated: true, id: 0,  } );
-
 	return [peer,datachannel];
 }
 
@@ -143,8 +168,7 @@ class signalingClient
 			}
 		});
 
-		this.socket.on('connect', () => {
-			this.socket.emit("join-folder",{folder_name:this.folder_name,folder_pass:this.folder_pass});
-		})
+		this.socket.emit("join-folder",{folder_name:this.folder_name,folder_pass:this.folder_pass});
 	}
+
 }
