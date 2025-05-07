@@ -28,7 +28,6 @@ class blob_file_handler
 		this.worker.onerror = (e) => {
 			console.error(e);
 		};
-
 	}
 
 	create_file()
@@ -39,10 +38,10 @@ class blob_file_handler
 
 	append_datachunks(chunks_b64_array)
 	{
-		this.worker.postMessage([chunks_b64_array,this.blob,this.mime_type]);
+		this.worker.postMessage([chunks_b64_array,this.mime_type]);
 	}
 
-	finish()
+	async finish()
 	{
 		this.worker.terminate();
 	}
@@ -56,24 +55,47 @@ class blob_file_handler
 
 class stream_file_handler
 {
-	constructor()
+	constructor(mime_type)
 	{
-		this.stream_file = null;
+		this.mime_type = mime_type;
+		this.writable = null;
+		this.file_handler = null;
+		this.worker = new Worker("/JS/webrtc/base64_datajoin.js");
+		this.onFinished = () => {};
+		this.worker.onmessage = async (message) => {
+			await this.writable.write(message.data.decoded_data);
+			this.onFinished();
+		};
+		this.worker.onerror = (e) => {
+			console.error(e);
+		}
 	}
 
-	async create_file()
+	async create_file(suggestedName)
 	{
-
+		try
+		{
+			this.file_handler = await window.showSaveFilePicker({
+				suggestedName:suggestedName
+			});
+			this.writable = await this.file_handler.createWritable();
+		}
+		catch
+		{
+			return false;
+		}
+		return true;
 	}
 
-	append_datachunks(chunks)
+	append_datachunks(chunks_b64_array)
 	{
-
+		this.worker.postMessage([chunks_b64_array,this.mime_type]);
 	}
 
-	download_file()
+	async finish()
 	{
-
+		this.writable.close();
+		this.worker.terminate();
 	}
 }
 
@@ -92,18 +114,18 @@ class downloadManager
 	{
 		const mime_type = file.type;
 		const handler = 'showSaveFilePicker' in window ? new stream_file_handler(mime_type) : new blob_file_handler(mime_type);
-		handler.onFinished = () => 
+		handler.onFinished = async () => 
 		{
 			const key = gen_download_key(file_id,dc_id);
 			const download = this.current_downloads.get(key);
 			if(download.finished)
 			{
-				this.current_downloads.get(key).file_handler.finish();
+				await this.current_downloads.get(key).file_handler.finish();
 				this.current_downloads.delete(key);
 			}
 			download.download_update_callback(download);
 		};
-		const flag = await handler.create_file();
+		const flag = await handler.create_file(file.name);
 		return flag ? handler : null;
 	}
 

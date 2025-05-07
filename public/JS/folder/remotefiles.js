@@ -21,11 +21,20 @@ function handle_chunks_update(request_btn,file,dc_id,download_manager)
 			request_btn.innerHTML = `${parseInt(100*(download.bytes_recived/download.file_size))}%`;
 			return;
 		}
-		const data = download.file_handler.file_data , mime_type = download.file_handler.mime_type;
-		const blob = new Blob(data,{type:mime_type});
-		const url = URL.createObjectURL(blob);
-		request_btn.innerHTML = "<img src='/icons/play-button-svgrepo-com.svg' class='download-button' alt='play/download '>";
-		request_btn.href = url;
+		if('showSaveFilePicker' in window)
+		{	
+			request_btn.href = "#";
+			request_btn.innerHTML = "saved";
+		}
+		else
+		{
+			request_btn.innerHTML = "<img src='/icons/play-button-svgrepo-com.svg' class='download-button' alt='play/download '>";
+			const data = download.file_handler.file_data , mime_type = download.file_handler.mime_type;
+			const blob = new Blob(data,{type:mime_type});
+			const url = URL.createObjectURL(blob);
+			request_btn.target = "_blank";
+			request_btn.href = url;
+		}
 	};
 }
 

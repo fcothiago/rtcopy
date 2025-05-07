@@ -22,7 +22,7 @@ function get_sorted_map(map)
 }
 
 self.onmessage = (e) => {
-	const [chunks_b64,blob_file,mime_type] = e.data;
+	const [chunks_b64,mime_type] = e.data;
 	if(!chunks_b64)
 		return;
 	const chunks_b64_sorted = get_sorted_map(chunks_b64) , chunks_b64_array = [];
