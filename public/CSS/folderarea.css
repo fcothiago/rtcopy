@@ -50,4 +50,9 @@ ul#directory li img{
 	ul#directory li{
 		grid-template-columns: 70% 30%;
 	}
+	ul#directory li span.buttons-group{
+		display:flex;
+		flex-direction:row;
+		justify-content:space-around;	
+	}
 }
