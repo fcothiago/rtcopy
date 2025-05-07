@@ -1,9 +1,9 @@
-function initclient(folder_name,folder_pass,server_url)
+function initclient(folder_name,folder_pass,server_url,chunk_size_bytes,chunk_count)
 {
 	const socket = io(server_url);
 	const client = new signalingClient(socket,folder_name,folder_pass);
-	const vfolder = new virtualFolder();
-	const manager = new downloadManager(vfolder);
+	const vfolder = new virtualFolder(chunk_size_bytes);
+	const manager = new downloadManager(vfolder,chunk_count);
 
 	const peers_counter = document.getElementById('peers-count');
 
@@ -13,11 +13,9 @@ function initclient(folder_name,folder_pass,server_url)
 		peers_counter.innerHTML = `${vfolder.datachannels.size}`;
 	}
 	client.onDataChannelMessage = (message,id) => vfolder.handle_datachannel_message(message,id);
-	client.onDataChannelClose = (dc_id) =>
+	client.onDataChannelClose = (id) =>
 	{	
-		vfolder.remove_datachannel(dc_id);
-		const query = document.querySelectorAll(`.remote-file-${dc_id}`);
-		query.forEach( element => {element.remove()});
+		vfolder.remove_datachannel(id);
 		peers_counter.innerHTML = `${vfolder.datachannels.size}`;
 	}
 	

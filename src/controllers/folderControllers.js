@@ -27,8 +27,6 @@ exports.getLandingPage = (req,res) => {
 exports.enterRoom = (req,res) => {
 	const folder_name = req.params.name;
 	const folder_pass = req.params.pass;
-	const page_url = process.env.SERVER_URL ? process.env.SERVER_URL  : 'http://localhost';
-	const port = process.env.SERVER_PORT; 
 	if(!folder_pass)
 	{
 		const pass = generate_pass(8);
@@ -42,8 +40,10 @@ exports.enterRoom = (req,res) => {
 	const params = {
 		folder_name:folder_name,
 		folder_pass:folder_pass,
-		server_url:page_url,
-		port:port
+		server_url:process.env.SERVER_URL ? process.env.SERVER_URL  : 'http://localhost',
+		port:process.env.SERVER_PORT ? process.env.SERVER_PORT : 7777,
+		chunk_size_bytes:process.env.CHUNK_SIZE_BYTES ? process.env.CHUNK_SIZE_BYTES  : 10000,
+		chunk_count:process.env.CHUNK_COUNT ? process.env.CHUNK_COUNT : 500 
 	};
 	res.render("folder", {params});
 }	

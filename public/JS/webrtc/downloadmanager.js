@@ -1,5 +1,3 @@
-const CHUNK_COUNT = 500;
-
 function gen_download_key(file_id,dc_id)
 {
 	return `${dc_id}${file_id}`;
@@ -81,9 +79,10 @@ class stream_file_handler
 
 class downloadManager
 {
-	constructor(folder)
+	constructor(folder,chunk_count)
 	{
-		this.folder = folder; 
+		this.folder = folder;
+		this.chunk_count = chunk_count;
 		this.current_downloads = new Map();
 		this.onChunkRecived = (infos,worker_id) => {console.log(`${worker_id} recived new chunck`)};
 		this.onFinish = (infos,worker_id) => {console.log(`${worker_id} finished download`)};
@@ -122,12 +121,12 @@ class downloadManager
 			chunks_in_memory : new Map(),
 			file_handler : file_handler,
 			file_size : file_size,
-			waiting_chunks_indexes : gen_range(0,CHUNK_COUNT),
+			waiting_chunks_indexes : gen_range(0,this.chunk_count),
 			bytes_recived : 0,
 			finished : false,
 			download_update_callback : onDownloadUpdate
 		});
-		this.folder.request_datachunks(0,CHUNK_COUNT,file_id,dc_id);
+		this.folder.request_datachunks(0,this.chunk_count,file_id,dc_id);
 	}
 
 	delete_download(file_id,dc_id)
@@ -160,8 +159,8 @@ class downloadManager
 		if(!download.finished)
 		{
 			const last_index = [...download.chunks_in_memory.entries()].reduce( (a,b) => a[0] >= b[0] ? a[0] : b[0] );
-			download.waiting_chunks_indexes = gen_range(last_index+1,CHUNK_COUNT);
-			this.folder.request_datachunks(last_index+1,CHUNK_COUNT,infos.file_id,dc_id);	
+			download.waiting_chunks_indexes = gen_range(last_index+1,this.chunk_count);
+			this.folder.request_datachunks(last_index+1,this.chunk_count,infos.file_id,dc_id);	
 		}
 		download.chunks_in_memory.clear();
 		//download.download_update_callback(download);

@@ -79,7 +79,9 @@
 			const folder_name = params.folder_name;
 			const folder_pass = params.folder_pass;
 			const page_url = `${params.server_url}${params.port ? ':' + params.port : ''}`;
-			initclient(folder_name,folder_pass,page_url);	
+			const chunk_size_bytes = params.chunk_size_bytes;
+			const chunk_count = params.chunk_count;
+			initclient(folder_name,folder_pass,page_url,chunk_size_bytes,chunk_count);	
 		</script>
 	</body>
 </html>

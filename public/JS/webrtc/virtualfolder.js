@@ -1,5 +1,3 @@
-const CHUNK_SIZE_BYTES = 10000;
-
 function stract_file_infos(file,file_id)
 {
 	return {
@@ -12,8 +10,9 @@ function stract_file_infos(file,file_id)
 
 class virtualFolder
 {
-	constructor()
+	constructor(chunk_size_bytes=10000)
 	{
+		this.chunk_size_bytes = chunk_size_bytes;
 		this.local_files = new Map();
 		this.remote_files = new Map();
 		this.total_files = 0;
@@ -217,7 +216,7 @@ class virtualFolder
 		{
 			start:start,
 			end:end,
-			chunk_size:CHUNK_SIZE_BYTES,
+			chunk_size:this.chunk_size_bytes,
 			file:file,
 			file_id:infos.file_id
 		}
