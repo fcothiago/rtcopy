@@ -24,8 +24,26 @@ aside#preview-area div#thumb-image-container img{
 }
 
 aside#preview-area div#file-infos-container table{
-	width:100%;
-	margin:auto;
+	width:20em;
+	table-layout:fixed;
+}
+
+aside#preview-area div#file-infos-container table td{
+	overflow:hidden;
+	text-overflow:ellipsis;
+}
+
+
+aside#preview-area div#file-infos-container table td span{
+	white-space:nowrap;
+}
+
+th:first-child, td:first-child {
+	width: 30%;
+}
+
+th:last-child, td:last-child {
+	width: 70%;
 }
 
 @media(max-width:600px){

@@ -21,11 +21,14 @@ ul#directory{
 ul#directory li{
 	height:2em;
 	display:grid;
-	overflow:hidden;
-	white-space:nowrap;
-	text-overflow: ellipsis;
-	grid-template-columns: 80% 20%;
+	grid-template-columns:80% 20%;
 	border-bottom: 1px solid black;
+}
+
+ul#directory li div{
+	white-space:nowrap;
+	text-overflow:ellipsis;
+	overflow:hidden;
 }
 
 ul#directory li *{

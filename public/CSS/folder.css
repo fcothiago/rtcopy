@@ -31,10 +31,22 @@ header{
 header span{
 	color:white;
 	font-family: "Space Grotesk", sans-serif;
+	margin-left:1em;
 }
 
 @media(max-width:600px){	
-	body,html{ 
-		grid-template-rows:10% 90%;
-	}									
+	header{
+		background-color:#ffffff;
+		margin:0;
+	}
+
+	header span{
+		background-color:#2C1320;
+		font-size:1em;
+		padding:0.2em;
+		border-bottom-right-radius:0.3em;
+		margin:0;
+		width:20%;
+		text-align:center;
+	}
 }
