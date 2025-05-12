@@ -13,12 +13,17 @@ aside#user-area div{
 
 aside#user-area div#input-area{
 	height:100%;
+	border-top-right-radius:10px;
+	border-bottom-right-radius:10px;
 	/*border-top-right-radius:10px;
 	border-bottom-right-radius:10px;*/
-	border-radius:3em;
-	margin-left:1em;
+	/*border-radius:3em;*/
+	/*margin-left:1em;*/
 }
 
+aside#user-area div#input-area img{
+	margin:auto;
+}
 
 aside#user-area div#infos-area{
 	height:50%;
