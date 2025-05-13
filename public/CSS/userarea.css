@@ -13,8 +13,11 @@ aside#user-area div{
 
 aside#user-area div#input-area{
 	height:100%;
-	border-top-right-radius:10px;
-	border-bottom-right-radius:10px;
+	border-radius:5em;
+	margin-left:1em;
+	padding:0.2em;
+	/*border-top-right-radius:10px;*/
+	/*border-bottom-right-radius:10px;*/
 	/*border-top-right-radius:10px;
 	border-bottom-right-radius:10px;*/
 	/*border-radius:3em;*/
@@ -29,17 +32,15 @@ aside#user-area div#infos-area{
 	height:50%;
 	margin-top:auto;
 	margin-bottom:auto;
+	border-radius:1em;
+	margin-right:1em;
+	padding:0.5em;
 }
 
 aside#user-area div img{
 	height:100%;
 }
 
-aside#user-area div#infos-area{
-	padding:0.5em;
-	border-top-left-radius:10px;
-	border-bottom-left-radius:10px;
-} 
 
 aside#user-area div#infos-area > div{
 	height:100%;
