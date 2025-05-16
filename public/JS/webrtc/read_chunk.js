@@ -1,5 +1,3 @@
-const buffer_limit = 100;
-
 function file_to_base64(file)
 {
 	return new Promise((resolve,reject) => 
@@ -22,15 +20,7 @@ self.onmessage = async (msg) =>
 		const slice_end   = ( (i+1)*chunk_size ) <= file.size ? (i+1)*chunk_size : file.size;
 		const slice = file.slice(slice_start,slice_end);
 		const data_b64 = ( await file_to_base64(slice) ).split(',')[1]; //remove "data:*/*;base64," prefix
-		buffer[i] = [data_b64,slice.size];
-		if(Object.keys(buffer).length >= buffer_limit)
-		{
-			self.postMessage({chunks_base64:buffer,file_id:file_id});
-			buffer = {};
-		}
-		if(slice_end > file.size)
-		{
-			break;
-		}
+		buffer[i] = [data_b64,slice.size];	
 	}
+	self.postMessage({chunks_base64:buffer,file_id:file_id});
 }
