@@ -42,8 +42,8 @@ exports.enterRoom = (req,res) => {
 		folder_pass:folder_pass,
 		server_url:process.env.SERVER_URL ? process.env.SERVER_URL  : 'http://localhost',
 		port:process.env.SERVER_PORT,
-		chunk_size_bytes:process.env.CHUNK_SIZE_BYTES ? process.env.CHUNK_SIZE_BYTES  : 10000,
-		chunk_count:process.env.CHUNK_COUNT ? process.env.CHUNK_COUNT : 500 
+		chunk_size_bytes:process.env.CHUNK_SIZE_BYTES ? parseInt(process.env.CHUNK_SIZE_BYTES)  : 10000,
+		chunk_count:process.env.CHUNK_COUNT ? parseInt(process.env.CHUNK_COUNT) : 500 
 	};
 	res.render("folder", {params});
 }	

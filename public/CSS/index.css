@@ -85,6 +85,10 @@ main h1{
 	main div#join-folder{
 		grid-template-columns: 40% 40% 20%;
 		margin-top:2em;
-	}	
+	}
+
+	main div#join-folder input{
+		font-size:0.7em;
+	}
 }
 
