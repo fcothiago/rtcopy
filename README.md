@@ -3,7 +3,7 @@
 rtcopy is a simple project that uses **WebRTC** and **WebSockets** to allow users to temporarily share files in a peer-to-peer (P2P) manner.
 
 # How it works  
-To create or access a virtual folder, go to a URL in the following format domain/folder/name/password or domain/folder/name, where **name** is the name of the virtual folder and **pass** is an optional password (if not provided, one will bee automatically generated).
+To create or access a virtual folder, go to a URL in the following format domain/folder/name/password or domain/folder/name, where **name** is the name of the virtual folder and **pass** is an optional password (if not provided, one will be automatically generated).
 
 After accessing the link, the user will enter a page where they can:
 
