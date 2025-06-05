@@ -21,6 +21,9 @@ function handle_chunks_update(request_btn,file,dc_id,download_manager)
 			request_btn.innerHTML = `${parseInt(100*(download.bytes_recived/download.file_size))}%`;
 			return;
 		}
+		request_btn.text = `Save file`;
+		request_btn.onclick = () => download_manager.saveFile(file.file_id,dc_id,() => {console.log('chunk')},() => {});
+		return;
 		if('showSaveFilePicker' in window)
 		{	
 			request_btn.href = "#";

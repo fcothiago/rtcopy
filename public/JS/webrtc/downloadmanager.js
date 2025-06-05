@@ -111,7 +111,7 @@ class downloadManager
 	
 	saveFile(file_id,dc_id,onchunkrecived,onerror)
 	{
-		const key = gen_download_key(infos.file_id,dc_id);	
+		const key = gen_download_key(file_id,dc_id);	
 		const download = this.current_downloads.get(key);
 		if( !download || !download.finished)
 			return;
