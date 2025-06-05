@@ -21,8 +21,9 @@ class fileDatabase
 			this.db = event.target.result;
 			if (this.db.objectStoreNames.contains('files'))
 				return;
-			this.db.createObjectStore('files',{keyPath:'id',autoIncrement:true});
-			this.db.createObjectStore('chunks',{keyPath:'id',autoIncrement:true});
+			const storeitem = this.db.createObjectStore('files',{keyPath:'id',autoIncrement:true});
+			const storechunks = this.db.createObjectStore('chunks',{keyPath:'index'});
+			storechunks.createIndex("fileid","fileid",{unique:false});
 		};
 		request.onsuccess = (event) => { this.db = event.target.result; };
 		request.onerror = (event) => {console.log(`initDatabase error ${event.target.error}`);};
@@ -36,11 +37,10 @@ class fileDatabase
 		const item = { 
 			name : fileinfos.name,
 			size : fileinfos.size,
-			folder : foldername,
 			finished: false
 		};
 		const addrequest = store.add(item);
-		addrequest.onsuccess = (event) = onsucces(event.target.result);
+		addrequest.onsuccess = (event) = onsuccess(event.target.result);
 		addrequest.onerror = onerror; 
 	}
 
@@ -68,6 +68,24 @@ class fileDatabase
 		getRequest.onsuccess = () => onsuccess(getrequest.result);
 		getRequest.onerror = (e) => onerror(e);
 	}
+
+	getChunks(fileid,onchunkrecived,onerror)
+	{
+		this.checkDB();
+		const transaction = this.db.transaction('chunk','readwrite');
+		const store = transaction.objectStore('chunk');
+		const index = store.index('fileid');
+		const getrequest = index.openCursor(fileid);
+		getRequest.onsuccess = () => {
+			const cursor = event.target.result;
+			if(!cursor)
+				return;
+			onchunkrecived(cursor.value);
+			cursor.continue();
+		}
+		getRequest.onerror = (e) => onerror(e);
+	}
+
 
 	updateFinishedStatus(fileid,finished,onsuccess,onerror)
 	{
