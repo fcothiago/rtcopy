@@ -115,8 +115,8 @@ class downloadManager
 		const download = this.current_downloads.get(key);
 		if( !download || !download.finished)
 			return;
-		const fileid = download.id;
-		this.filedb.getChunks(fileid,onchunkrecived,(e) => console.log(`failed to get chunks from file id ${fileid}`));
+		const id = download.id;
+		this.filedb.getChunks(id,onchunkrecived,(e) => console.log(`failed to get chunks from file id ${fileid}`));
 	}
 
 	handle_missing_chunks()

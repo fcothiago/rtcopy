@@ -16,9 +16,9 @@ class fileDatabase
 	initDatabase()
 	{
 		const request = indexedDB.open('storage',this.dbver);
-		request.onupgradeneeded = (event) =>
+		request.onupgradeneeded = (e) =>
 		{
-			this.db = event.target.result;
+			this.db = e.target.result;
 			if (this.db.objectStoreNames.contains('files'))
 				return;
 			//TODO:Ensure that all chunks will be stored in order
@@ -27,8 +27,8 @@ class fileDatabase
 			storechunks.createIndex("fileid","fileid",{unique:false});
 			storechunks.createIndex("index","index",{unique:false});
 		};
-		request.onsuccess = (event) => { this.db = event.target.result; };
-		request.onerror = (event) => {console.log(`initDatabase error ${event.target.error}`);};
+		request.onsuccess = (e) => { this.db = e.target.result; };
+		request.onerror = (e) => {console.log(`initDatabase error ${e.target.error}`);};
 	}
 
 	addFile(fileinfos,onsuccess,onerror)
@@ -42,7 +42,7 @@ class fileDatabase
 			finished: false
 		};
 		const addrequest = store.add(item);
-		addrequest.onsuccess = (event) = onsuccess(event.target.result);
+		addrequest.onsuccess = (e) => onsuccess(e.target.result);
 		addrequest.onerror = onerror; 
 	}
 
@@ -78,8 +78,10 @@ class fileDatabase
 		const store = transaction.objectStore('chunks');
 		const index = store.index('fileid');
 		const getrequest = index.openCursor(fileid);
-		getrequest.onsuccess = (event) => {
-			const cursor = event.target.result;
+		getrequest.onsuccess = (e) => {
+			console.log(fileid);
+			console.log(e);
+			const cursor = e.target.result;
 			if(!cursor)
 				return;
 			onchunkrecived(cursor.value);
