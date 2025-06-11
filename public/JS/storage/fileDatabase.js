@@ -79,8 +79,6 @@ class fileDatabase
 		const index = store.index('fileid');
 		const getrequest = index.openCursor(fileid);
 		getrequest.onsuccess = (e) => {
-			console.log(fileid);
-			console.log(e);
 			const cursor = e.target.result;
 			if(!cursor)
 				return;

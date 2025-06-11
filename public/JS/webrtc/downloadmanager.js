@@ -44,7 +44,7 @@ class downloadManager
 		{
 			this.current_downloads.set(key,
 			{
-				id : id,
+				fileid : id,
 				next_block_index: this.chunk_count,
 				file_size : file_infos.size,
 				waiting_chunks_indexes : gen_range(0,this.chunk_count),
@@ -95,7 +95,7 @@ class downloadManager
 					this.process_datachunks(infos,download,dc_id);
 				download.download_update_callback(download);
 			}
-			this.filedb.addChunk(download.file_id,chunkUInt8,infos.chunk_index,onsuccess,(e) => console.log('failed to insert chunk'));
+			this.filedb.addChunk(download.fileid,chunkUInt8,infos.chunk_index,onsuccess,(e) => console.log('failed to insert chunk'));
 		}
 		catch(e){console.log('erro adding data chunk');}
 	}
@@ -115,7 +115,7 @@ class downloadManager
 		const download = this.current_downloads.get(key);
 		if( !download || !download.finished)
 			return;
-		const id = download.id;
+		const id = download.fileid;
 		this.filedb.getChunks(id,onchunkrecived,(e) => console.log(`failed to get chunks from file id ${fileid}`));
 	}
 
