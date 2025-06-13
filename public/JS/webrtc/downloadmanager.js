@@ -108,16 +108,6 @@ class downloadManager
 		this.folder.request_datachunks(download.next_block_index,this.chunk_count,infos.file_id,dc_id);	
 		download.next_block_index += this.chunk_count;
 	}
-	
-	saveFile(file_id,dc_id,onchunkrecived,onerror)
-	{
-		const key = gen_download_key(file_id,dc_id);	
-		const download = this.current_downloads.get(key);
-		if( !download || !download.finished)
-			return;
-		const id = download.fileid;
-		this.filedb.getChunks(id,onchunkrecived,(e) => console.log(`failed to get chunks from file id ${fileid}`));
-	}
 
 	handle_missing_chunks()
 	{

@@ -39,6 +39,7 @@ class fileDatabase
 		const item = { 
 			name : fileinfos.name,
 			size : fileinfos.size,
+			type : fileinfos.type,
 			finished: false
 		};
 		const addrequest = store.add(item);
