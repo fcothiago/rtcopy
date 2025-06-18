@@ -4,6 +4,7 @@ function initclient(folder_name,folder_pass,server_url,chunk_size_bytes,chunk_co
 	const client = new signalingClient(socket,folder_name,folder_pass);
 	const vfolder = new virtualFolder(chunk_size_bytes);
 	const manager = new downloadManager(vfolder,chunk_count);
+	const exportfile = new exportFileManager(); 
 
 	const peers_counter = document.getElementById('peers-count');
 
@@ -30,7 +31,7 @@ function initclient(folder_name,folder_pass,server_url,chunk_size_bytes,chunk_co
 	vfolder.onNewRemoteFile = (file,dc_id) => 
 	{
 		files_counter.innerHTML = `${vfolder.total_files}`;	
-		add_remotefile(file,dc_id,vfolder,manager);
+		add_remotefile(file,dc_id,vfolder,manager,exportfile);
 	}
 	vfolder.onNewLocalFile = (file) => 
 	{
