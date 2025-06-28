@@ -1,8 +1,8 @@
-function joinUint8Array(array1,array2):
+function joinUint8Array(array1,array2)
 {
 	const joinedArray = new Uint8Array(array1.length+array2.length);
 	joinedArray.set(array1,0);
-	joinedArray.set(array2,array.length);
+	joinedArray.set(array2,array1.length);
 	return joinedArray;
 }
 
@@ -18,23 +18,24 @@ class exportFileManager
 
 	startExport(fileid,onchunkrecived,onfinished)
 	{
-		onsuccess = (file) => 
+		const onsuccess = (file) => 
 		{
-			this.currentexport.set(fileid,{data:new Uint8Array(),type:file.type,bytesrecived:0});
-			updateexport = (chunk) => 
+			this.currentexport.set(fileid,{data:[],type:file.type,size:file.size,bytesrecived:0});
+			const updateexport = (data) => 
 			{
 				let item = this.currentexport.get(fileid);
-				item.bytesrecived += chunk.length;
+				item.bytesrecived += data.chunk.length;
+				onchunkrecived(data,item);
 				if(this.saveinmemory)
-					item.data = joinUint8Array(item.data,chunk.chunk);
+					item.data.push(data.chunk);
+				if(item.bytesrecived >= item.size)
+				{
+					onfinished(item);
+					return;
+				}
 				this.currentexport.set(fileid,item);
 			};
-			chunkonsuccess = (chunk) => 
-			{ 
-				updateexport(chunk);
-				onchunkrecived(chunk);
-			};
-			this.filedb.getChunks(id,onchunkrecived,(e) => console.log(`failed to get chunks from file id ${fileid}`));
+			this.filedb.getChunks(fileid,updateexport,(e) => console.log(`failed to get chunks from file id ${fileid}`));
 		};
 		this.filedb.getFile(fileid,onsuccess,(e) => console.log(`failed to get file ${fileid}`));
 	}

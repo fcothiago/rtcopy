@@ -17,7 +17,7 @@ function base64_to_uint8array(chunk_b64)
 	const chunk_length = parsed_chunk.length;
 	const full_chunk = new Uint8Array(chunk_length);
 	for(let i = 0; i < chunk_length ; i++)
-		full_chunk[i] = chunk_b64.charCodeAt(i);
+		full_chunk[i] = parsed_chunk.charCodeAt(i);
 	return full_chunk;
 }
 
@@ -46,7 +46,9 @@ class downloadManager
 			{
 				fileid : id,
 				next_block_index: this.chunk_count,
+				file_name : file_infos.name,
 				file_size : file_infos.size,
+				file_type : file_infos.type,
 				waiting_chunks_indexes : gen_range(0,this.chunk_count),
 				bytes_recived : 0,
 				finished : false,
@@ -55,6 +57,12 @@ class downloadManager
 			this.folder.request_datachunks(0,this.chunk_count,file_id,dc_id);
 		};
 		this.filedb.addFile(file_infos,onsuccess,(e) => console.log(`failed to crete file in db`));
+	}
+
+	get_download(file_id,dc_id)
+	{
+		const key = gen_download_key(file_id,dc_id);
+		this.current_downloads.get(key);
 	}
 
 	delete_download(file_id,dc_id)
