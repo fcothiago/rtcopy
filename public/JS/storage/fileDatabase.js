@@ -72,6 +72,22 @@ class fileDatabase
 		getrequest.onerror = (e) => onerror(e);
 	}
 
+	getAllFiles(onfilerecived,onfail)
+	{
+		this.checkDB();
+		const transaction = this.db.transaction("files","readonly");
+		const store = transaction.objectStore("files");
+		const cursorRequest = store.openCursor();
+		cursorRequest.onsuccess = (e) => {
+			const cursor = e.target.result;
+			if(!cursor)
+				return;
+			onfilerecived(cursor.value);
+			cursor.continue();
+		};
+		cursorRequest.onerror = onfail;
+	}
+
 	getChunks(fileid,onchunkrecived,onerror)
 	{
 		this.checkDB();
@@ -88,7 +104,6 @@ class fileDatabase
 		}
 		getrequest.onerror = (e) => onerror(e);
 	}
-
 
 	updateFinishedStatus(fileid,finished,onsuccess,onerror)
 	{

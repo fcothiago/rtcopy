@@ -46,4 +46,8 @@ exports.enterRoom = (req,res) => {
 		chunk_count:process.env.CHUNK_COUNT ? parseInt(process.env.CHUNK_COUNT) : 500 
 	};
 	res.render("folder", {params});
-}	
+}
+
+exports.getSavedFiles = (req,res) => {
+	res.render("files");
+};
