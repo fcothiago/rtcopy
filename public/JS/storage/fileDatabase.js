@@ -47,6 +47,32 @@ class fileDatabase
 		addrequest.onerror = onerror; 
 	}
 
+	removeFile(fileid,onsuccess,onfail)
+	{
+		this.checkDB();
+		const transaction = this.db.transaction('files','readwrite');
+		const store = transaction.objectStore('files'); 
+		const request = store.delete(fileid);
+		request.onsuccess = () => {
+			onsuccess(fileid);
+			this.removeChunks(fileid,() => {},(fileid) => console.log(`failed to remove chunks from file ${fileid}`))
+		};
+		request.onfail = onfail;
+	}
+
+	removeChunks(fileid,onsuccess,onfail)
+	{
+		const transaction = this.db.transaction('chunks','readwrite');
+		const store = transaction.objectStore('chunks');
+		const index = store.index('fileid');
+		const range = IDBKeyRange.only(fileid);
+		const cursorrequest = index.openCursor(range);
+		cursorrequest.onsuccess = (e) => {
+			const cursor = e.target.result;
+			cursor ? cursor.delete() : onfail(fileid);
+		};
+	}
+
 	addChunk(fileid,chunk,index,onsuccess,onerror)
 	{
 		this.checkDB();
