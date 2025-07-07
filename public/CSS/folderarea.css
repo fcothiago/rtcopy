@@ -6,7 +6,7 @@ section#folder-area{
 }
 
 section#folder-area div#scrollable-area{
-	height:70%;
+	height:100%;
 	width:100%;
 	overflow:scroll;
 	margin:0;
