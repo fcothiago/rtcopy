@@ -42,7 +42,7 @@ async function getWritableStream(name,type)
 		return null;
 	}
 }
-c
+
 async function exportToFileStream(download,request_btn,export_manager)
 {
 	request_btn.text = `0% exported`;
