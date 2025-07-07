@@ -12,7 +12,60 @@ function add_remotefile_infos(remote_file_item,file,dc_id)
 	remote_file_item.appendChild(file_infos);
 }
 
-function handle_chunks_update(request_btn,file,dc_id,download_manager)
+function exportToBlobFileURL(fileid,request_btn,export_manager)
+{
+	request_btn.text = `0% exported`;
+	request_btn.onclick = () => {};
+	export_manager.saveinmemory = true;
+	const exportupdate = (chunk,item) => {
+		const progress = Math.floor(100*item.bytesrecived/item.size);
+		request_btn.text = `${progress}% exported`;
+	};
+	const exportfinished = (item) => {
+		const blob = new Blob(item.data, { type: item.type });
+		request_btn.href = URL.createObjectURL(blob);
+		request_btn.text = `file exported`;
+	};
+	export_manager.startExport(fileid,exportupdate,exportfinished);
+
+}
+
+async function getWritableStream(name,type)
+{
+	try
+	{
+		const handler = await window.showSaveFilePicker({suggestedName:name});
+		return await handler.createWritable();
+	}
+	catch(err)
+	{
+		return null;
+	}
+}
+
+async function exportToFileStream(download,request_btn,export_manager)
+{
+	request_btn.text = `0% exported`;
+	request_btn.onclick = () => {};
+	export_manager.saveinmemory = false;
+	const writablestream = await getWritableStream(download.file_name,download.file_type);
+	const exportupdate = async (data,item) => {
+		await writablestream.write({
+			type : "write",
+			position : item.bytesrecived - data.chunk.length,
+			data : data.chunk
+		});
+		const progress = Math.floor(100*item.bytesrecived/item.size);
+		request_btn.text = `${progress}% exported`;
+	};
+	const exportfinished = async (item) => {
+		request_btn.text = `file exported`;
+		await writablestream.close()
+	};
+	export_manager.startExport(download.fileid,exportupdate,exportfinished);
+}
+
+function handle_chunks_update(request_btn,file,dc_id,download_manager,export_manager)
 {
 	return (download) => 
 	{
@@ -21,46 +74,34 @@ function handle_chunks_update(request_btn,file,dc_id,download_manager)
 			request_btn.innerHTML = `${parseInt(100*(download.bytes_recived/download.file_size))}%`;
 			return;
 		}
-		if('showSaveFilePicker' in window)
-		{	
-			request_btn.href = "#";
-			request_btn.innerHTML = "saved";
-		}
-		else
-		{
-			request_btn.innerHTML = "<img src='/icons/play-button-svgrepo-com.svg' class='download-button' alt='play/download '>";
-			const data = download.file_handler.file_data , mime_type = download.file_handler.mime_type;
-			const blob = new Blob(data,{type:mime_type});
-			const url = URL.createObjectURL(blob);
-			request_btn.target = "_blank";
-			request_btn.href = url;
-		}
+		request_btn.text = `export file`;
+		request_btn.onclick = "showSaveFilePicker" in window ? async () => exportToFileStream(download,request_btn,export_manager) : () => exportToBlobFileURL(download.fileid,request_btn,export_manager);
 	};
 }
 
-function handle_request_btn_click(request_btn,file,dc_id,download_manager)
+function handle_request_btn_click(request_btn,file,dc_id,download_manager,export_manager)
 {
 	return async (e) =>
 	{
 		e.preventDefault();
 		request_btn.onclick = () => {};
-		const chunk_update_callback = handle_chunks_update(request_btn,file,dc_id,download_manager);
+		const chunk_update_callback = handle_chunks_update(request_btn,file,dc_id,download_manager,export_manager);
 		await download_manager.start_download(file.file_id,dc_id,chunk_update_callback);
 		request_btn.innerHTML = "0%";
 	};
 }
 
-function add_remotefile_request_btn(remote_file_item,file,dc_id,download_manager)
+function add_remotefile_request_btn(remote_file_item,file,dc_id,download_manager,export_manager)
 {
 	const request_btn = document.createElement('a');
 	request_btn.href = '#';
 	request_btn.innerHTML = 'request';
-	request_btn.onclick = handle_request_btn_click(request_btn,file,dc_id,download_manager);
+	request_btn.onclick = handle_request_btn_click(request_btn,file,dc_id,download_manager,export_manager);
 	request_btn.innerHTML = "<img src='/icons/download-minimalistic-svgrepo-com.svg' class='download-button' alt='request file'>";
 	remote_file_item.appendChild(request_btn);
 }
 
-function add_remotefile(file,dc_id,folder,download_manager)
+function add_remotefile(file,dc_id,folder,download_manager,export_manager)
 {
 	const directory = document.getElementById('directory');
 	const remote_file_item = document.createElement('li');
@@ -70,7 +111,7 @@ function add_remotefile(file,dc_id,folder,download_manager)
 		...file,
 		owner:dc_id
 	});
-	add_remotefile_request_btn(buttons_group,file,dc_id,download_manager);
+	add_remotefile_request_btn(buttons_group,file,dc_id,download_manager,export_manager);
 	remote_file_item.className = `remote-file-${dc_id}`;
 	remote_file_item.id = `remote-${file.file_id}`;
 	buttons_group.className = 'buttons-group';

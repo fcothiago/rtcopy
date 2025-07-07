@@ -8,5 +8,6 @@ const folderControllers = require('../controllers/folderControllers');
 router.get('/',folderControllers.getLandingPage);
 router.get('/folder/:name',folderControllers.enterRoom);
 router.get('/folder/:name/:pass',folderControllers.enterRoom);
+router.get('/files',folderControllers.getSavedFiles);
 
 module.exports = router;
