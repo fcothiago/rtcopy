@@ -6,10 +6,6 @@ body,html{
 	margin: 0;
 }
 
-header{
-	background-color:#2C1320;
-	height:3em;
-}
 
 body{
 	display:flex;
@@ -24,11 +20,20 @@ main{
 }
 
 header{
+	background:#588157;
 	height:3rem;
 	display:flex;
-	flex-direction:column;
-	justify-content:center;
+	flex-direction:row;
 	font-size:0.5rem;
+}
+
+header div#input-area{
+	flex-grow:1;	
+}
+
+
+header div#infos-area{
+	flex-grow:3;	
 }
 
 header img{

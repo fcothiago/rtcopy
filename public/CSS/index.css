@@ -16,19 +16,27 @@ body,html{
 }
 
 body {
-	/*https://projects.verou.me/css3patterns/#carbon-fibre*/
-	/*by Atle Mo (design), Lea Verou (code)*/
- 	background: radial-gradient(black 15%, transparent 16%) 0 0, radial-gradient(black 15%, transparent 16%) 8px 8px, radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px, radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
-	background-color:#282828;
-	background-size:16px 16px;
+	  /*https://coolors.co/palette/dad7cd-a3b18a-588157-3a5a40-344e41*/
+	  background-image: url("/imgs/bgpattern.svg");
+          background-color:white;
+          background-repeat: repeat-x;
+          background-size: auto 100vh;
 }
 
 main{
+	background:white;
+	color: black;
 	margin:auto;
 	width:80%;
+	border-radius: 12px;
 	display:flex;
+	padding: 1rem;
 	flex-direction:column;
 	justify-content:space-between;
+}
+
+main h1{
+	color:#3A5A40;
 }
 
 main a{
@@ -37,6 +45,12 @@ main a{
 
 main div{
 	width:100%;
+}
+
+div.tabs span{
+	background-color:white;
+  background: linear-gradient(90deg, red, orange, yellow, green, blue);
+	animation: text-slide 5s ease infinite;
 }
 
 main nav{
