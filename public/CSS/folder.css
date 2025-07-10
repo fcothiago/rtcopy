@@ -8,23 +8,31 @@ body,html{
 
 header{
 	background-color:#2C1320;
+	height:3em;
 }
 
 body{
-	display:grid;
-	grid-template-rows:5% 95%;
+	display:flex;
+	flex-direction:column;
 	background:#ffffff;
 }
 
 main{
 	width:100%;
+	flex-grow:1;
 	position:relative;
 }
 
 header{
+	height:3rem;
 	display:flex;
 	flex-direction:column;
 	justify-content:center;
+	font-size:0.5rem;
+}
+
+header img{
+	height:1.5rem;
 }
 
 header span{
@@ -35,17 +43,5 @@ header span{
 }
 
 @media(max-width:600px){	
-	header{
-		background-color:#ffffff;
-		margin:0;
-	}
 
-	header span{
-		grid:inline-block;
-		background-color:#2C1320;
-		padding:0.2em;
-		border-bottom-right-radius:0.3em;
-		margin:0;
-		text-align:center;
-	}
 }

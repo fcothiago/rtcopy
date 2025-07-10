@@ -40,6 +40,7 @@
 					<a href="#" onclick="update_text(0);">RTCopy</a>
 					<a href="#" onclick="update_text(1);">how to use it?</a>
 					<a href="#" onclick="update_text(2);">about</a>
+					<a href="#" id="filedb"> Saved Files</a>
 				</nav>
 			</div>
 			<div id="join-folder">
@@ -47,6 +48,9 @@
 				<input placeholder="Type a password" type="password" id="folderpass">
 				<button id="join-folder-btn" onclick='join_folder();'>join</button>
 			</div>
-		</main>			
+		</main>	
+		<script>
+			document.getElementById('filedb').href = `${page_url}/files`;
+		</script>
 	<body>
 </html>

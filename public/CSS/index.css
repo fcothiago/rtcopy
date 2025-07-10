@@ -16,9 +16,11 @@ body,html{
 }
 
 body {
-  	background: linear-gradient(300deg,#5f4b66,#5f4b66,#917899);
-  	background-size: 180% 180%;
-  	animation: gradient-animation 18s ease infinite;
+	/*https://projects.verou.me/css3patterns/#carbon-fibre*/
+	/*by Atle Mo (design), Lea Verou (code)*/
+ 	background: radial-gradient(black 15%, transparent 16%) 0 0, radial-gradient(black 15%, transparent 16%) 8px 8px, radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px, radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+	background-color:#282828;
+	background-size:16px 16px;
 }
 
 main{
@@ -61,34 +63,25 @@ main h1{
 	text-align:center;
 }
 
-@keyframes gradient-animation  {
- 	0% {
-    		background-position: 0% 50%;
-  	}
-  	50%{
-    		background-position: 100% 50%;
-  	}
-  	100% {
-    		background-position: 0% 50%;
-  	}
+@media (max-width: 768px) {
+  	main div#join-folder{
+		width:100%;
+		display:block;
+		margin:auto;
+	}
+	
+	main div#join-folder *{
+		display:block;
+		width:100%;
+		text-align:center;
+	}
+
+	nav{
+		display:grid;
+		grid-template-columns: repeat(2, 1fr);
+	}
+	
+	nav a{
+		display:block;
+	}	
 }
-
-@media(max-width:600px){
-	body,html{
-		font-size:1.1em;
-	}
-
-	main div#join-folder{
-		font-size:0.8em;
-	}
-
-	main div#join-folder{
-		grid-template-columns: 40% 40% 20%;
-		margin-top:2em;
-	}
-
-	main div#join-folder input{
-		font-size:0.7em;
-	}
-}
-
