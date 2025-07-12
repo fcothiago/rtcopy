@@ -20,33 +20,30 @@
 		<title>Virtual Folder</title>
 	</head>
 	<body>
-		<header>
-			<div id="input-area">
-				<input type="file" id="fileinput" multiple/>	
-				<label for="fileinput" class="fileinput-label">
-					<img src="/icons/upload-svgrepo-com.svg" alt="add local filie">
-				</label>
-			</div>
-			<div id="infos-area">
-				<span id="connections" class="infos">
-					<img src="/icons/wireless-svgrepo-com.svg" alt="0 peers connected">
-					<span id="peers-count">0</span>
-				</span>
-				<span id="files" class="infos">
-					<img src="/icons/folder-open-svgrepo-com.svg" alt="0 files in folder">
-					<span id="files-count">0</span>
-				</span>
-			</div>			
-		</header>
 		<main>	
+			<header>	
+				<div id="input-area">
+					<input type="file" id="fileinput" multiple/>	
+					<label for="fileinput" class="fileinput-label">
+						<img src="/icons/upload-svgrepo-com.svg" alt="add local filie">
+					</label>
+				</div>
+				<div id="infos-area">
+					<span id="connections" class="infos">
+						<img src="/icons/wireless-svgrepo-com.svg" alt="0 peers connected">
+						<span id="peers-count">0</span>
+					</span>
+					<span id="files" class="infos">
+						<img src="/icons/folder-open-svgrepo-com.svg" alt="0 files in folder">
+						<span id="files-count">0</span>
+					</span>
+				</div>
+			</header>
 			<section id="folder-area">
 				<div id="scrollable-area">
 					<ul id="directory"></ul>
 				</div>
 			</section>
-			<aside id="user-area">
-				
-			</aside>
 		</main>
 		<aside id="preview-area">
 			<div id="close-button-container">

@@ -1,29 +1,37 @@
 header{
-	display:grid;
-	height:4rem;
+	/*display:grid;*/
 	background-color:#588157;
-	grid-template-columns:70% 30%;
+	width:100%;
+	display:flex;
+	/*grid-template-columns:70% 30%;*/
 }
 
 header div{
-
-}
-
-header label{
-
-}
-
-header div#input-area{
 	height:100%;
 }
 
-header img{
-	height:3rem;
+header div#input-area{
+	margin-left:12px;
+	margin-right:25vw;
 }
+
+header div img,header div span{
+	height:100%;
+}
+
+header label{
+	display:block;
+	height:100%;
+}
+
+
+header div#input-area label{
+	margin-top:auto;
+	margin-bottom:auto;
+}
+
+
 
 input#fileinput{
 	display:none;
-}
-
-@media(max-width:600px){
 }
