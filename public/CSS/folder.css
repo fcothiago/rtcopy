@@ -19,34 +19,6 @@ main{
 	position:relative;
 }
 
-header{
-	background:#588157;
-	height:3rem;
-	display:flex;
-	flex-direction:row;
-	font-size:0.5rem;
-}
-
-header div#input-area{
-	flex-grow:1;	
-}
-
-
-header div#infos-area{
-	flex-grow:3;	
-}
-
-header img{
-	height:1.5rem;
-}
-
-header span{
-	color:white;
-	font-family: "Space Grotesk", sans-serif;
-	margin-left:1em;
-	font-size:1.5em;
-}
-
 @media(max-width:600px){	
 
 }

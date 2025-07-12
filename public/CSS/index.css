@@ -40,8 +40,16 @@ main h1{
 }
 
 main a{
-	color:white;
+	color:#3A5A40;
+	width:100%;
+	text-align:center;
+	white-space: nowrap;
 }
+
+main nav{
+	display:grid;
+	grid-template-columns:25% 25% 25% 25%;
+};
 
 main div{
 	width:100%;
@@ -53,11 +61,11 @@ div.tabs span{
 	animation: text-slide 5s ease infinite;
 }
 
-main nav{
+/*main nav{
 	display:flex;
 	flex-direction:row;
 	justify-content:space-around;
-}
+}*/
 
 main div#join-folder{
 	width:100%;
@@ -90,9 +98,9 @@ main h1{
 		text-align:center;
 	}
 
-	nav{
+	main nav{
 		display:grid;
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns:50% 50%;
 	}
 	
 	nav a{
