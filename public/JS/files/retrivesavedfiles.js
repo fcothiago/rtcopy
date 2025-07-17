@@ -2,7 +2,7 @@ function addExportButton(buttonsgroup,file,exportmanager)
 {
 	const exportbutton = document.createElement('a');
 	exportbutton.href = '#';
-	exportbutton.text = 'export file';
+	exportbutton.text = 'export';
 	if("showSaveFilePicker" in window )
 		exportbutton.onclick = async () => exportToFileStream({
 			fileid:file.id,

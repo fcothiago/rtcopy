@@ -1,9 +1,10 @@
 section#folder-area{
-
+	height:100%;
 }
 
 section#folder-area div#scrollable-area{
 	width:100%;
+	height:100%;
 	overflow:scroll;
 	margin:0;
 }

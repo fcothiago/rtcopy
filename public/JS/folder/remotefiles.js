@@ -14,17 +14,21 @@ function add_remotefile_infos(remote_file_item,file,dc_id)
 
 function exportToBlobFileURL(fileid,request_btn,export_manager)
 {
-	request_btn.text = `0% exported`;
+	request_btn.text = `0%`;
 	request_btn.onclick = () => {};
 	export_manager.saveinmemory = true;
 	const exportupdate = (chunk,item) => {
 		const progress = Math.floor(100*item.bytesrecived/item.size);
-		request_btn.text = `${progress}% exported`;
+		request_btn.text = `${progress}%`;
 	};
 	const exportfinished = (item) => {
 		const blob = new Blob(item.data, { type: item.type });
+		const icon = document.createElement('img');
+		request_btn.text = ``;
+		icon.src = '/icons/play-button-svgrepo-com.svg';
+		icon.alt = 'play file';
 		request_btn.href = URL.createObjectURL(blob);
-		request_btn.text = `file exported`;
+		request_btn.appendChild(icon);
 	};
 	export_manager.startExport(fileid,exportupdate,exportfinished);
 
@@ -45,7 +49,7 @@ async function getWritableStream(name,type)
 
 async function exportToFileStream(download,request_btn,export_manager)
 {
-	request_btn.text = `0% exported`;
+	request_btn.text = `0%`;
 	request_btn.onclick = () => {};
 	export_manager.saveinmemory = false;
 	const writablestream = await getWritableStream(download.file_name,download.file_type);
@@ -56,10 +60,14 @@ async function exportToFileStream(download,request_btn,export_manager)
 			data : data.chunk
 		});
 		const progress = Math.floor(100*item.bytesrecived/item.size);
-		request_btn.text = `${progress}% exported`;
+		request_btn.text = `${progress}%`;
 	};
 	const exportfinished = async (item) => {
-		request_btn.text = `file exported`;
+		request_btn.text = ``;
+		const icon = document.createElement('img');
+		icon.src = '/icons/check-circle-svgrepo-com.svg';
+		icon.alt = 'export done';
+		request_btn.appendChild(icon);
 		await writablestream.close()
 	};
 	export_manager.startExport(download.fileid,exportupdate,exportfinished);
@@ -74,7 +82,7 @@ function handle_chunks_update(request_btn,file,dc_id,download_manager,export_man
 			request_btn.innerHTML = `${parseInt(100*(download.bytes_recived/download.file_size))}%`;
 			return;
 		}
-		request_btn.text = `export file`;
+		request_btn.text = `export`;
 		request_btn.onclick = "showSaveFilePicker" in window ? async () => exportToFileStream(download,request_btn,export_manager) : () => exportToBlobFileURL(download.fileid,request_btn,export_manager);
 	};
 }

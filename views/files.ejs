@@ -26,32 +26,34 @@
 			</section>	
 		</main>
 		<aside id="preview-area">
-			<div id="close-button-container">
-				<a href="#" id="preview-close-button" onclick='close_preview()'><img src="/icons/cross-svgrepo-com.svg"></a>
-			</div>
-			<div id="thumb-image-container">
-				<img src="/icons/image-combiner-svgrepo-com.svg"> 
-			</div>
-			<div id="file-infos-container">
-				<table>
-					<tr>
-						<td><strong>name</strong></td>
-						<td><span id="preview-filename">name</span></td>
-					</tr>
-					<tr>
-						<td><strong>size</strong></td>
-						<td id="preview-filesize">0 kb</td>
-					</tr>
-					<tr>
-						<td><strong>type</strong></td>
-						<td id="preview-filetype">data</td>
-					</tr>
-					<tr>
-						<td><strong>owner</strong></td>
-						<td id="preview-fileowner">local</td>
-					</tr>
-				</table>
-			</div>
+			<section>
+				<div id="close-button-container">
+					<a href="#" id="preview-close-button" onclick='close_preview()'><img src="/icons/cross-svgrepo-com.svg"></a>
+				</div>
+				<div id="thumb-image-container">
+					<img src="/icons/image-combiner-svgrepo-com.svg"> 
+				</div>
+				<div id="file-infos-container">
+					<table>
+						<tr>
+							<td><strong>name</strong></td>
+							<td><span id="preview-filename">name</span></td>
+						</tr>
+						<tr>
+							<td><strong>size</strong></td>
+							<td id="preview-filesize">0 kb</td>
+						</tr>
+						<tr>
+							<td><strong>type</strong></td>
+							<td id="preview-filetype">data</td>
+						</tr>
+						<tr>
+							<td><strong>owner</strong></td>
+							<td id="preview-fileowner">local</td>
+						</tr>
+					</table>
+				</div>
+			</section>
 		</aside>
 		<script>
 			retriveSavedFiles();

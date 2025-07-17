@@ -20,18 +20,20 @@ class exportFileManager
 	{
 		const onsuccess = (file) => 
 		{
-			this.currentexport.set(fileid,{data:[],type:file.type,size:file.size,bytesrecived:0});
+			this.currentexport.set(fileid,{data:[],type:file.type,size:file.size,bytesrecived:0,finished:false});
 			const updateexport = (data) => 
 			{
 				let item = this.currentexport.get(fileid);
+				if(item.finished)
+					return;
 				item.bytesrecived += data.chunk.length;
 				onchunkrecived(data,item);
 				if(this.saveinmemory)
 					item.data.push(data.chunk);
 				if(item.bytesrecived >= item.size)
 				{
+					item.finished = true;
 					onfinished(item);
-					return;
 				}
 				this.currentexport.set(fileid,item);
 			};
