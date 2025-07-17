@@ -1,8 +1,11 @@
 header{
 	/*display:grid;*/
 	background-color:#588157;
+	height:5vh;
 	width:100%;
 	display:flex;
+	flex-direction:row;
+	justify-content:space-between;
 	/*grid-template-columns:70% 30%;*/
 }
 
@@ -10,28 +13,33 @@ header div{
 	height:100%;
 }
 
-header div#input-area{
-	margin-left:12px;
-	margin-right:25vw;
+header div#infos-area{
+	height:100%;
+	color:white;
+	display:flex;
+	flex-direction:row;
+	justify-content:space-between;
 }
 
-header div img,header div span{
+header div#infos-area > * {
+	margin: auto 0.5rem auto 0.5rem;
+	font-size: 1rem;
+}
+
+header div#infos-area > span span{
+	
+}
+
+header div img{
 	height:100%;
 }
-
-header label{
-	display:block;
-	height:100%;
-}
-
-
-header div#input-area label{
-	margin-top:auto;
-	margin-bottom:auto;
-}
-
-
 
 input#fileinput{
 	display:none;
+}
+
+@media (max-width: 768px){
+	header div#infos-area{
+		height:100%;
+	}
 }

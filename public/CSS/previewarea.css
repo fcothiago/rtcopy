@@ -3,24 +3,55 @@
 aside#preview-area{
 	display:none;
 	position:absolute;
-	float:right;
+	top:0;
+	left:0;
 	height:100%;
-	width:80%;
-	right:0;
-	grid-template-rows:5% 25% 70%;
-	background-color:white;
+	width:100%;
+	background-color:rgba(0.2,0.2,0.2,0.9);
 	box-shadow: -10px 4px 10px rgba(0, 0, 0, 0.3);
 	font-family: "Space Grotesk", sans-serif;
 	font-size: 0.8em;
 }
 
-aside#preview-area div#close-button-container img{
+aside#preview-area section div img{
+	/*display:none;*/
 	height:100%;
 }
 
-aside#preview-area div#thumb-image-container img{
-	height:100%;
+aside#preview-area section div a{
+	margin-left:auto;
+} 
+
+aside#preview-area section{
+	background:white;
+	width:80vw;
+	height:80vh;
+	border-radius: 10px;
 	margin:auto;
+	display:flex;
+	flex-direction:column;
+}
+
+aside#preview-area div#close-button-container{
+	height:10%;
+}
+
+aside#preview-area div#close-button-container a{
+	height:100%;
+	float:right;
+}
+
+aside#preview-area div#thumb-image-container{
+	height:20%;
+}
+
+aside#preview-area div#file-infos-container{
+	flex-grow:1;
+} 
+
+aside#preview-area div#thumb-image-container img{
+	margin-left:auto;
+	margin-right:auto;
 }
 
 aside#preview-area div#file-infos-container table{

@@ -29,14 +29,15 @@
 					</label>
 				</div>
 				<div id="infos-area">
-					<span id="connections" class="infos">
-						<img src="/icons/wireless-svgrepo-com.svg" alt="0 peers connected">
-						<span id="peers-count">0</span>
-					</span>
-					<span id="files" class="infos">
-						<img src="/icons/folder-open-svgrepo-com.svg" alt="0 files in folder">
-						<span id="files-count">0</span>
-					</span>
+					<img src="/icons/wireless-svgrepo-com.svg" alt="0 peers connected">
+					<span id="peers-count">0</span>
+					<img src="/icons/folder-open-svgrepo-com.svg" alt="0 files in folder">
+					<span id="files-count">0</span>
+				</div>
+				<div id="storage-area">
+					<a hre="#" id="storage-link">
+						<img src="/icons/storage-cloud-data-document-paper-extension-page-svgrepo-com.svg"/>
+					</a>
 				</div>
 			</header>
 			<section id="folder-area">
@@ -46,32 +47,32 @@
 			</section>
 		</main>
 		<aside id="preview-area">
-			<div id="close-button-container">
-				<a href="#" id="preview-close-button" onclick='close_preview()'><img src="/icons/cross-svgrepo-com.svg"></a>
-			</div>
-			<div id="thumb-image-container">
-				<img src="/icons/image-combiner-svgrepo-com.svg"> 
-			</div>
-			<div id="file-infos-container">
-				<table>
-					<tr>
-						<td><strong>name</strong></td>
-						<td><span id="preview-filename">name</span></td>
-					</tr>
-					<tr>
-						<td><strong>size</strong></td>
-						<td id="preview-filesize">0 kb</td>
-					</tr>
-					<tr>
-						<td><strong>type</strong></td>
-						<td id="preview-filetype">data</td>
-					</tr>
-					<tr>
-						<td><strong>owner</strong></td>
-						<td id="preview-fileowner">local</td>
-					</tr>
-				</table>
-			</div>
+			<section>
+				<div id="close-button-container">
+					<a href="#" id="preview-close-button" onclick='close_preview()'><img src="/icons/cross-svgrepo-com.svg"></a>
+				</div>
+				<div id="thumb-image-container"><img src="/icons/image-combiner-svgrepo-com.svg"></div>
+				<div id="file-infos-container">
+					<table>
+						<tr>
+							<td><strong>name</strong></td>
+							<td><span id="preview-filename">name</span></td>
+						</tr>
+						<tr>
+							<td><strong>size</strong></td>
+							<td id="preview-filesize">0 kb</td>
+						</tr>
+						<tr>
+							<td><strong>type</strong></td>
+							<td id="preview-filetype">data</td>
+						</tr>
+						<tr>
+							<td><strong>owner</strong></td>
+							<td id="preview-fileowner">local</td>
+						</tr>
+					</table>
+				</div>
+			</section>
 		</aside>
 		<script>
 			const params = <%- JSON.stringify(params) %>;
@@ -80,6 +81,7 @@
 			const page_url = `${params.server_url}${params.port ? ':' + params.port : ''}`;
 			const chunk_size_bytes = params.chunk_size_bytes;
 			const chunk_count = params.chunk_count;
+			document.getElementById("storage-link").href = `${page_url}/files`;
 			initclient(folder_name,folder_pass,page_url,chunk_size_bytes,chunk_count);	
 		</script>
 	</body>
